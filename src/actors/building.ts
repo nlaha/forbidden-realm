@@ -1,4 +1,4 @@
-import { Actor, IsometricEntityComponent } from "excalibur";
+import { Actor, ImageSource, IsometricEntityComponent } from "excalibur";
 import { Buildings } from "../resources";
 import { game } from "../main";
 
@@ -14,13 +14,16 @@ class Building extends Actor {
   construction_progress: number = 0;
   placed: boolean = false;
 
-  constructor(isoMap: ex.IsometricMap, pos: ex.Vector) {
+  constructor(isoMap: ex.IsometricMap, pos: ex.Vector, img: ImageSource) {
     super({
       x: pos.x,
       y: pos.y,
     });
 
     this.isoMap = isoMap;
+
+    this.addComponent(new IsometricEntityComponent(this.isoMap));
+    this.graphics.use(img.toSprite());
 
     // assign custom material for outlines
     this.graphics.material = game.graphicsContext.createMaterial({
@@ -37,8 +40,17 @@ class Building extends Actor {
       this.pos = this.isoMap.tileToWorld(this.isoMap.worldToTile(evt.worldPos));
     });
 
-    this.on("pointerup", () => {
-      this.place();
+    this.on("pointerup", (evt) => {
+      // make sure the building is placed on a tile
+      if (
+        this.isoMap.getTile(
+          this.isoMap.worldToTile(this.pos).x,
+          this.isoMap.worldToTile(this.pos).y
+        ) &&
+        evt.nativeEvent.target === game.canvas
+      ) {
+        this.place();
+      }
     });
   }
 
@@ -96,11 +108,6 @@ class Building extends Actor {
     });
 
     this.placed = true;
-  }
-
-  public onInitialize() {
-    this.addComponent(new IsometricEntityComponent(this.isoMap));
-    this.graphics.use(Buildings.House1.toSprite());
   }
 }
 

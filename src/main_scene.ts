@@ -1,19 +1,15 @@
-import {
-  Actor,
-  Engine,
-  IsometricEntityComponent,
-  IsometricMap,
-  Scene,
-  vec,
-} from "excalibur";
+import { Actor, Engine, IsometricMap, Scene, vec } from "excalibur";
 import { Tiles, Buildings } from "./resources";
 import Building from "./actors/building";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 import CameraController from "./utility/camera_controller";
 import { WaterComponent } from "./components/water_component";
+import Tree from "./actors/tree";
+import Character from "./actors/character";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
+
   noiseGen: NoiseFunction2D;
   draggingEntity: Actor | null = null;
 
@@ -35,20 +31,28 @@ class MainScene extends Scene {
 
     this.noiseGen = createNoise2D();
 
-    // generate base terrain
-    for (let tile of this.isoMap.tiles) {
-      // get perlin noise to determine tile type
-      const noise = this.noiseGen(tile.x / 16, tile.y / 16);
-      if (noise < -0.2) tile.addGraphic(Tiles.Dirt.toSprite());
-      else tile.addGraphic(Tiles.Grass.toSprite());
-    }
-
     // generate rivers
     // pick a random start point on the edge of the map
     const start = vec(0, Math.floor(Math.random() * this.isoMap.rows));
+    // make sure the start point is not too close to the edge
+    if (start.y < 5 || start.y > this.isoMap.rows - 5) {
+      start.y = 5;
+    }
+
     for (let i = 0; i < 200; i++) {
       const tile = this.isoMap.getTile(start.x, start.y);
-      tile?.addComponent(new WaterComponent());
+      tile?.addTag("water");
+
+      // add a bunch of sand tiles around the water
+      for (let x = -1; x < 2; x++) {
+        for (let y = -1; y < 2; y++) {
+          const sandTile = this.isoMap.getTile(start.x + x, start.y + y);
+          if (sandTile && !sandTile.tags.has("water")) {
+            sandTile.addGraphic(Tiles.Sand.toSprite());
+            sandTile.addTag("sand");
+          }
+        }
+      }
 
       // randomly change direction
       if (i % 2 === 0) {
@@ -64,6 +68,53 @@ class MainScene extends Scene {
       }
     }
 
+    // generate base terrain
+    for (let tile of this.isoMap.tiles) {
+      if (tile.tags.has("water") || tile.tags.has("sand")) {
+        continue;
+      }
+      // get perlin noise to determine tile type
+      const noise = this.noiseGen(tile.x / 16, tile.y / 16);
+      if (noise < -0.2) {
+        tile.addGraphic(Tiles.Dirt.toSprite());
+        tile.addTag("dirt");
+      } else {
+        tile.addGraphic(Tiles.Grass.toSprite());
+        tile.addTag("grass");
+      }
+    }
+
+    // randomly place trees on grass tiles
+    for (let i = 0; i < 200; i++) {
+      const tile =
+        this.isoMap.tiles[Math.floor(Math.random() * this.isoMap.tiles.length)];
+      // make sure tile is > 5 tiles away from the edge
+      if (
+        tile.x < 5 ||
+        tile.x > this.isoMap.columns - 5 ||
+        tile.y < 5 ||
+        tile.y > this.isoMap.rows - 5
+      ) {
+        continue;
+      }
+
+      if (tile.tags.has("grass")) {
+        const tree = new Tree(this.isoMap, { pos: tile.pos });
+        // add random variation to tree size and a little bit of randomness to position
+        tree.scale = vec(1, 1).scale(0.5 + Math.random() * 0.5);
+        this.add(tree);
+      }
+    }
+
+    // spawn 5 workers in random locations
+    for (let i = 0; i < 5; i++) {
+      const tile =
+        this.isoMap.tiles[Math.floor(Math.random() * this.isoMap.tiles.length)];
+      const worker = new Character(this.isoMap, { pos: tile.pos });
+      this.add(worker);
+    }
+
+    // add the map to the scene
     this.add(this.isoMap);
 
     // initialize building palette
@@ -76,11 +127,12 @@ class MainScene extends Scene {
       img.width = 64;
       img.height = 64;
       img.style.cursor = "pointer";
+      img.classList.add("palette-item");
 
       img.onclick = () => {
         const pos = engine.input.pointers.primary.lastWorldPos;
-        const building = new Building(this.isoMap, pos);
-        this.add(building);
+        const buildingObj = new Building(this.isoMap, pos, building);
+        this.add(buildingObj);
       };
 
       palette?.appendChild(img);
