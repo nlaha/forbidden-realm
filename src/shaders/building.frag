@@ -3,7 +3,7 @@ precision mediump float;
 uniform sampler2D u_graphic;
 uniform float outlineRadius;
 uniform float u_opacity;
-uniform
+uniform float construction_progress;
 
 in vec2 v_uv;
 out vec4 fragColor;
