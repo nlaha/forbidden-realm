@@ -1,4 +1,4 @@
-import { Engine } from "excalibur";
+import { Color, DisplayMode, Engine } from "excalibur";
 import { loader } from "./resources";
 import MainScene from "./main_scene";
 
@@ -11,6 +11,8 @@ class Game extends Engine {
       scenes: {
         mainScene: MainScene,
       },
+      displayMode: DisplayMode.Fixed,
+      backgroundColor: Color.Black,
     });
   }
   initialize() {
