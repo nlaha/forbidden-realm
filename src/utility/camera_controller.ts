@@ -1,4 +1,4 @@
-import { Actor, Engine } from "excalibur";
+import { Actor, Engine, KeyEvent, Keys} from "excalibur";
 
 class CameraController extends Actor {
   public onInitialize(engine: Engine) {
@@ -27,6 +27,24 @@ class CameraController extends Actor {
         lastPos = evt.screenPos.clone();
       }
     });
+
+    engine.input.keyboard.on("hold", (evt: KeyEvent) => {
+      if (evt.key == Keys.KeyW || evt.key == Keys.ArrowUp) {
+        camera.pos.y -= 2;
+      }
+
+      if (evt.key == Keys.KeyS || evt.key == Keys.ArrowDown) {
+        camera.pos.y += 2;
+      }
+
+      if (evt.key == Keys.KeyA || evt.key == Keys.ArrowLeft) {
+        camera.pos.x -= 2;
+      }
+
+      if (evt.key == Keys.KeyD || evt.key == Keys.ArrowRight) {
+        camera.pos.x += 2;
+      }
+    })
   }
 }
 
