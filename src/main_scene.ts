@@ -6,7 +6,7 @@ import CameraController from "./utility/camera_controller";
 import Tree from "./actors/tree";
 import Character from "./actors/character";
 import Harvestable from "./actors/harvestable";
-import { compute_iso_collider } from "./utility/utils";
+import { spawner } from "./utility/utils";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -86,57 +86,26 @@ class MainScene extends Scene {
     }
 
     // spawn trees on grass tiles
-    for (let i = 0; i < 500; i++) {
-      const tile =
-        this.isoMap.tiles[Math.floor(Math.random() * this.isoMap.tiles.length)];
-      // make sure tile is > 5 tiles away from the edge
-      if (
-        tile.x < 5 ||
-        tile.x > this.isoMap.columns - 5 ||
-        tile.y < 5 ||
-        tile.y > this.isoMap.rows - 5
-      ) {
-        continue;
-      }
-
-      if (tile.tags.has("grass")) {
-        const tree = new Tree(this.isoMap, { pos: tile.pos });
-        this.add(tree);
-      }
-    }
+    spawner(5, 100, this.isoMap, "grass").forEach((pos) => {
+      const tree = new Tree(this.isoMap, { pos: pos });
+      this.add(tree);
+    });
 
     // spawn rocks on dirt tiles
-    for (let i = 0; i < 10; i++) {
-      const tile =
-        this.isoMap.tiles[Math.floor(Math.random() * this.isoMap.tiles.length)];
-
-      // make sure tile is > 5 tiles away from the edge
-      if (
-        tile.x < 5 ||
-        tile.x > this.isoMap.columns - 5 ||
-        tile.y < 5 ||
-        tile.y > this.isoMap.rows - 5
-      ) {
-        continue;
-      }
-
-      if (tile.tags.has("dirt")) {
-        const rock = new Harvestable(
-          this.isoMap,
-          { pos: tile.pos },
-          Harvestables.rock1.img
-        );
-        this.add(rock);
-      }
-    }
+    spawner(5, 10, this.isoMap, "dirt").forEach((pos) => {
+      const rock = new Harvestable(
+        this.isoMap,
+        { pos: pos },
+        Harvestables.rock1
+      );
+      this.add(rock);
+    });
 
     // spawn 5 workers in random locations
-    for (let i = 0; i < 5; i++) {
-      const tile =
-        this.isoMap.tiles[Math.floor(Math.random() * this.isoMap.tiles.length)];
-      const worker = new Character(this.isoMap, { pos: tile.pos });
+    spawner(5, 5, this.isoMap, "grass").forEach((pos) => {
+      const worker = new Character(this.isoMap, { pos: pos });
       this.add(worker);
-    }
+    });
 
     // add the map to the scene
     this.add(this.isoMap);

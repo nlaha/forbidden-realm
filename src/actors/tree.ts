@@ -5,6 +5,7 @@ import {
   IsometricMap,
 } from "excalibur";
 import { Foliage } from "../resources";
+import { compute_iso_collider } from "../utility/utils";
 
 class Tree extends Actor {
   isoMap: IsometricMap;
@@ -21,6 +22,8 @@ class Tree extends Actor {
         Math.floor(Math.random() * Object.values(Foliage).length)
       ].toSprite();
     this.graphics.use(treeSprite);
+
+    this.collider.set(compute_iso_collider(this, this.graphics.current!));
   }
 
   public onInitialize() {}

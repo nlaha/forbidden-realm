@@ -15,7 +15,7 @@ import wall_left from "./images/buildings/wall_left.png";
 import tree1 from "./images/foliage/tree1.png";
 
 // rocks
-import rock1 from "./images/foliage/rock1.png";
+import rock1 from "./images/rocks/rock1.png";
 
 // font
 import font from "./images/font.png";
