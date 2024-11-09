@@ -6,13 +6,18 @@ import CameraController from "./utility/camera_controller";
 import Tree from "./actors/tree";
 import Character from "./actors/character";
 import Harvestable from "./actors/harvestable";
-import { spawner } from "./utility/utils";
+import { init_navgrid, mark_tiles_as_solid, spawner } from "./utility/utils";
+import { AStarFinder } from "astar-typescript";
+import { Grid } from "@evilkiwi/astar";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
 
   noiseGen: NoiseFunction2D;
   draggingEntity: Actor | null = null;
+
+  // grid of integers for pathfinding
+  navgrid: Grid | null = null;
 
   /**
    * Start-up logic, called once
@@ -26,48 +31,50 @@ class MainScene extends Scene {
       pos: vec(500, 200),
       tileWidth: 32,
       tileHeight: 16,
-      columns: 64,
-      rows: 64,
+      columns: 32,
+      rows: 32,
     });
+
+    this.navgrid = init_navgrid(this.isoMap);
 
     this.noiseGen = createNoise2D();
 
-    // generate rivers
-    // pick a random start point on the edge of the map
-    const start = vec(0, Math.floor(Math.random() * this.isoMap.rows));
-    // make sure the start point is not too close to the edge
-    if (start.y < 5 || start.y > this.isoMap.rows - 5) {
-      start.y = 5;
-    }
+    // // generate rivers
+    // // pick a random start point on the edge of the map
+    // const start = vec(0, Math.floor(Math.random() * this.isoMap.rows));
+    // // make sure the start point is not too close to the edge
+    // if (start.y < 5 || start.y > this.isoMap.rows - 5) {
+    //   start.y = 5;
+    // }
 
-    for (let i = 0; i < 200; i++) {
-      const tile = this.isoMap.getTile(start.x, start.y);
-      tile?.addTag("water");
+    // for (let i = 0; i < 200; i++) {
+    //   const tile = this.isoMap.getTile(start.x, start.y);
+    //   tile?.addTag("water");
 
-      // add a bunch of sand tiles around the water
-      for (let x = -1; x < 2; x++) {
-        for (let y = -1; y < 2; y++) {
-          const sandTile = this.isoMap.getTile(start.x + x, start.y + y);
-          if (sandTile && !sandTile.tags.has("water")) {
-            sandTile.addGraphic(Tiles.Sand.toSprite());
-            sandTile.addTag("sand");
-          }
-        }
-      }
+    //   // add a bunch of sand tiles around the water
+    //   for (let x = -1; x < 2; x++) {
+    //     for (let y = -1; y < 2; y++) {
+    //       const sandTile = this.isoMap.getTile(start.x + x, start.y + y);
+    //       if (sandTile && !sandTile.tags.has("water")) {
+    //         sandTile.addGraphic(Tiles.Sand.toSprite());
+    //         sandTile.addTag("sand");
+    //       }
+    //     }
+    //   }
 
-      // randomly change direction
-      if (i % 2 === 0) {
-        const dir = Math.random();
-        if (dir < 0.5) start.y--;
-        else if (dir > 0.5) start.y++;
-      } else {
-        start.x++;
-      }
+    //   // randomly change direction
+    //   if (i % 2 === 0) {
+    //     const dir = Math.random();
+    //     if (dir < 0.5) start.y--;
+    //     else if (dir > 0.5) start.y++;
+    //   } else {
+    //     start.x++;
+    //   }
 
-      if (tile) {
-        tile.addGraphic(Tiles.Water.toSprite());
-      }
-    }
+    //   if (tile) {
+    //     tile.addGraphic(Tiles.Water.toSprite());
+    //   }
+    // }
 
     // generate base terrain
     for (let tile of this.isoMap.tiles) {
@@ -86,13 +93,13 @@ class MainScene extends Scene {
     }
 
     // spawn trees on grass tiles
-    spawner(5, 100, this.isoMap, "grass").forEach((pos) => {
+    spawner(5, 10, this.isoMap, "grass").forEach((pos) => {
       const tree = new Tree(this.isoMap, { pos: pos });
       this.add(tree);
     });
 
     // spawn rocks on dirt tiles
-    spawner(5, 10, this.isoMap, "dirt").forEach((pos) => {
+    spawner(5, 4, this.isoMap, "dirt").forEach((pos) => {
       const rock = new Harvestable(
         this.isoMap,
         { pos: pos },
@@ -101,8 +108,11 @@ class MainScene extends Scene {
       this.add(rock);
     });
 
-    // spawn 5 workers in random locations
-    spawner(5, 5, this.isoMap, "grass").forEach((pos) => {
+    // initialize pathfinding
+    mark_tiles_as_solid(this.isoMap);
+
+    // spawn workers in random locations
+    spawner(1, 5, this.isoMap, "grass").forEach((pos) => {
       const worker = new Character(this.isoMap, { pos: pos });
       this.add(worker);
     });

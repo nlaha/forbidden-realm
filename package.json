@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@evilkiwi/astar": "^3.3.1",
     "@excaliburjs/testing": "0.26.0",
     "excalibur": "0.29.3",
     "simplex-noise": "^4.0.3",

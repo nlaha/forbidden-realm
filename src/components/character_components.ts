@@ -4,6 +4,7 @@ import { female_names, male_names } from "../tables/names";
 export class LivingComponent extends Component {
   public health: number = 100;
   public maxHealth: number = 100;
+  public energy: number = 100;
 
   public isDead(): boolean {
     return this.health <= 0;
@@ -21,6 +22,10 @@ export class LivingComponent extends Component {
     if (this.health > this.maxHealth) {
       this.health = this.maxHealth;
     }
+  }
+
+  public canAct(): boolean {
+    return this.energy >= 100;
   }
 
   public onAdd() {}

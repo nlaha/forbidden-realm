@@ -30,7 +30,8 @@
         display: flex;
         justify-content: center;
         gap: 0.5rem;
-        background: #282828;
+        background: #973737;
+        box-shadow: 0 0 1rem 0.5rem #000;
         border-bottom-left-radius: 0.5rem;
         border-bottom-right-radius: 0.5rem;
       }
@@ -43,6 +44,17 @@
       .palette-item:hover {
         background: #d9b43c;
       }
+
+      .info-panel {
+        height: 250px;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        background: #973737;
+        box-shadow: 0 0 1rem 0.5rem #000;
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+      }
     </style>
   </head>
 
@@ -50,6 +62,7 @@
     <main>
       <canvas id="game"></canvas>
       <div id="palette"></div>
+      <div id="info-panel"></div>
     </main>
     <script type="module" src="./src/main.ts"></script>
   </body>

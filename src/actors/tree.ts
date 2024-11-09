@@ -23,7 +23,7 @@ class Tree extends Actor {
       ].toSprite();
     this.graphics.use(treeSprite);
 
-    this.collider.set(compute_iso_collider(this, this.graphics.current!));
+    this.collider.set(compute_iso_collider(this.graphics.current!));
   }
 
   public onInitialize() {}

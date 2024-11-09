@@ -21,7 +21,7 @@ class Harvestable extends Actor {
 
     this.graphics.use(img.toSprite());
 
-    this.collider.set(compute_iso_collider(this, this.graphics.current!));
+    this.collider.set(compute_iso_collider(this.graphics.current!));
   }
 
   public onInitialize() {}

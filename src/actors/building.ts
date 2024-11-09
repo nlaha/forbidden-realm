@@ -1,10 +1,10 @@
 import { Actor, ImageSource, IsometricEntityComponent } from "excalibur";
-import { Buildings } from "../resources";
+import { Buildings, Tiles } from "../resources";
 import { game } from "../main";
 
 import buildingFrag from "../shaders/building.frag";
 import ProgressIndicator from "./progress_bar";
-import { compute_iso_collider } from "../utility/utils";
+import { compute_iso_collider, mark_tile_solid_single } from "../utility/utils";
 
 /**
  * Building actor
@@ -110,7 +110,10 @@ class Building extends Actor {
 
     this.placed = true;
 
-    this.collider.set(compute_iso_collider(this, this.graphics.current!));
+    this.collider.set(compute_iso_collider(this.graphics.current!));
+
+    // mark tiles as solid
+    mark_tile_solid_single(this.isoMap, this);
   }
 }
 
