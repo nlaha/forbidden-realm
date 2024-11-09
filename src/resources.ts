@@ -21,7 +21,7 @@ import rock1 from "./images/rocks/rock1.png";
 import font from "./images/font.png";
 
 // import characters
-import worker from "./images/characters/worker.png";
+import human from "./images/characters/human.png";
 
 export const Tiles = {
   Dirt: new ImageSource(dirt),
@@ -49,7 +49,7 @@ export const Harvestables = {
 } as const;
 
 export const Characters = {
-  Worker: new ImageSource(worker),
+  Human: new ImageSource(human),
 } as const;
 
 const spriteFontSheet = SpriteSheet.fromImageSource({
