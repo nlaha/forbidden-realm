@@ -8,6 +8,7 @@ import sand from "./images/tiles/sand.png";
 
 // import buildings
 import house1 from "./images/buildings/house1.png";
+import blacksmith from "./images/buildings/blacksmith.png"
 import wall_left from "./images/buildings/wall_left.png";
 
 // import foliage
@@ -31,6 +32,7 @@ export const Tiles = {
 
 export const Buildings = {
   House1: new ImageSource(house1),
+  Blacksmith: new ImageSource(blacksmith),
   WallLeft: new ImageSource(wall_left),
 } as const;
 
