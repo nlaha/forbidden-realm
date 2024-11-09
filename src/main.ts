@@ -1,6 +1,7 @@
-import { Color, DisplayMode, Engine } from "excalibur";
-import { loader } from "./resources";
+import { Color, DisplayMode, Engine, PointerScope } from "excalibur";
+import { Buildings, loader } from "./resources";
 import MainScene from "./main_scene";
+import Building from "./actors/building";
 
 class Game extends Engine {
   constructor() {
@@ -14,6 +15,7 @@ class Game extends Engine {
       },
       displayMode: DisplayMode.FillContainer,
       backgroundColor: Color.Black,
+      pointerScope: PointerScope.Canvas,
     });
   }
   initialize() {

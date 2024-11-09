@@ -1,4 +1,11 @@
-import { Engine, IsometricMap, Scene, vec } from "excalibur";
+import {
+  Actor,
+  Engine,
+  IsometricEntityComponent,
+  IsometricMap,
+  Scene,
+  vec,
+} from "excalibur";
 import { Tiles, Buildings } from "./resources";
 import Building from "./actors/building";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
@@ -8,6 +15,7 @@ import { WaterComponent } from "./components/water_component";
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
   noiseGen: NoiseFunction2D;
+  draggingEntity: Actor | null = null;
 
   /**
    * Start-up logic, called once
@@ -58,10 +66,25 @@ class MainScene extends Scene {
 
     this.add(this.isoMap);
 
-    // add building actor
-    const building = new Building(this.isoMap, vec(500, 300));
+    // initialize building palette
+    const palette = document.getElementById("palette");
 
-    this.add(building);
+    // iterate through all buildings and add them as images to the palette
+    for (const building of Object.values(Buildings)) {
+      const img = document.createElement("img");
+      img.src = building.path;
+      img.width = 64;
+      img.height = 64;
+      img.style.cursor = "pointer";
+
+      img.onclick = () => {
+        const pos = engine.input.pointers.primary.lastWorldPos;
+        const building = new Building(this.isoMap, pos);
+        this.add(building);
+      };
+
+      palette?.appendChild(img);
+    }
   }
 }
 

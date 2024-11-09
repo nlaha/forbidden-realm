@@ -2,6 +2,8 @@
 precision mediump float;
 uniform sampler2D u_graphic;
 uniform float outlineRadius;
+uniform float u_opacity;
+uniform
 
 in vec2 v_uv;
 out vec4 fragColor;
@@ -24,4 +26,5 @@ void main() {
   vec4 mat = texture(u_graphic, v_uv);
   float factor = smoothstep(0.5, 0.7, mat.a);
   fragColor = mix(fragColor, mat, factor);
+  fragColor.a *= u_opacity;
 }

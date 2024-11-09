@@ -15,15 +15,32 @@
         background-color: #000;
         width: 100%;
       }
+
+      img {
+        image-rendering: optimizeSpeed; /* STOP SMOOTHING, GIVE ME SPEED  */
+        image-rendering: -moz-crisp-edges; /* Firefox                        */
+        image-rendering: -o-crisp-edges; /* Opera                          */
+        image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+        image-rendering: pixelated; /* Universal support since 2021   */
+        image-rendering: optimize-contrast; /* CSS3 Proposed                  */
+        -ms-interpolation-mode: nearest-neighbor; /* IE8+                           */
+      }
+
+      #palette {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        background: #282828;
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+      }
     </style>
   </head>
 
   <body>
     <main>
       <canvas id="game"></canvas>
-      <div class="menu">
-        <button>Add Unit</button>
-      </div>
+      <div id="palette"></div>
     </main>
     <script type="module" src="./src/main.ts"></script>
   </body>
