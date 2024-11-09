@@ -1,5 +1,8 @@
 import { Actor, IsometricEntityComponent } from "excalibur";
 import { Buildings } from "../resources";
+import { game } from "../main";
+
+import outlineFrag from "../shaders/outline.frag";
 
 class Building extends Actor {
   isoMap: ex.IsometricMap;
@@ -25,13 +28,25 @@ class Building extends Actor {
       }
     }
 
+    // assign custom material for outlines
+    const material = (this.graphics.material =
+      game.graphicsContext.createMaterial({
+        name: "custom-material",
+        // load from shaders/outline.frag
+        fragmentSource: outlineFrag,
+      }));
+
     // highlight the building when hovered
     this.on("pointerenter", () => {
-      this.graphics.opacity = 0.5;
+      material.update((shader) => {
+        shader.trySetUniformFloat("outlineRadius", 2.0);
+      });
     });
 
     this.on("pointerleave", () => {
-      this.graphics.opacity = 1;
+      material.update((shader) => {
+        shader.trySetUniformFloat("outlineRadius", 0.0);
+      });
     });
   }
 
