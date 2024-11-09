@@ -10,24 +10,21 @@ class CameraController extends Actor {
       camera.zoom = Math.max(0.5, Math.min(2, zoom));
     });
 
-    // set up drag to pan
-    let lastPos = engine.input.pointers.primary.lastWorldPos.clone();
-    let isDragging = false;
+    // move camera when dragging
+    let lastPos = engine.input.pointers.primary.lastScreenPos.clone();
+    let dragging = false;
     engine.input.pointers.primary.on("down", (evt) => {
-      lastPos = evt.worldPos.clone();
-      isDragging = true;
+      dragging = true;
+      lastPos = evt.screenPos.clone();
     });
-
     engine.input.pointers.primary.on("up", () => {
-      isDragging = false;
+      dragging = false;
     });
-
     engine.input.pointers.primary.on("move", (evt) => {
-      if (isDragging) {
-        const delta = lastPos.sub(evt.worldPos);
-        camera.pos = camera.pos.add(delta);
-
-        lastPos = evt.worldPos.clone();
+      if (dragging) {
+        const delta = evt.screenPos.sub(lastPos);
+        camera.pos = camera.pos.sub(delta);
+        lastPos = evt.screenPos.clone();
       }
     });
   }
