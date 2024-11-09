@@ -3,6 +3,7 @@ import {
   ActorArgs,
   IsometricEntityComponent,
   IsometricMap,
+  Vector,
 } from "excalibur";
 import { Characters } from "../resources";
 import {
@@ -24,6 +25,11 @@ class Character extends Actor {
     this.addComponent(new BrainComponent());
     this.addComponent(new CharacterComponent());
     this.graphics.use(Characters.Worker.toSprite());
+  }
+
+  public move(pos: ex.Vector) {
+    // lerp to new position
+    this.actions.easeTo(pos, 1000);
   }
 
   public onInitialize() {}
