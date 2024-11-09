@@ -1,18 +1,22 @@
 import { Engine } from "excalibur";
-import { Player } from "./player";
 import { loader } from "./resources";
+import MainScene from "./main_scene";
 
 class Game extends Engine {
   constructor() {
     super({
       width: 1280,
       height: 720,
+      pixelArt: true,
+      scenes: {
+        mainScene: MainScene,
+      },
     });
   }
   initialize() {
-    const player = new Player();
-    this.add(player);
     this.start(loader);
+    console.log(this.currentSceneName);
+    this.goToScene("mainScene");
   }
 }
 

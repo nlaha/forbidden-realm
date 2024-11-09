@@ -1,14 +1,25 @@
 import { ImageSource, Loader } from "excalibur";
-import sword from "./images/sword.png"; // for parcelv2 this is configured in the .parcelrc
 
-export const Resources = {
-  Sword: new ImageSource(sword),
+// import tiles
+import dirt from "./images/tiles/dirt.png";
+import grass from "./images/tiles/grass.png";
+
+// import buildings
+import house1 from "./images/buildings/house1.png";
+
+export const Tiles = {
+  Dirt: new ImageSource(dirt),
+  Grass: new ImageSource(grass),
+} as const;
+
+export const Buildings = {
+  House1: new ImageSource(house1),
 } as const;
 
 export const loader = new Loader();
 
 // TODO: set loader.logo
 
-for (const res of Object.values(Resources)) {
+for (const res of [Object.values(Tiles), Object.values(Buildings)].flat()) {
   loader.addResource(res);
 }
