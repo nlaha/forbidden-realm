@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excalibur + Parcel v2</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crimson Game Jam - Fall 2024</title>
     <style>
-        body {
-            margin: 0;
-        }
+      body {
+        margin: 0;
+      }
+      #game {
+        display: block;
+        margin: 0 auto;
+        background-color: #000;
+        width: 100%;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
+    <main>
+      <canvas id="game"></canvas>
+      <div class="menu">
+        <button>Add Unit</button>
+      </div>
+    </main>
     <script type="module" src="./src/main.ts"></script>
-</body>
-
+  </body>
 </html>

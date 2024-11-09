@@ -5,13 +5,14 @@ import MainScene from "./main_scene";
 class Game extends Engine {
   constructor() {
     super({
+      canvasElementId: "game",
       width: 1280,
       height: 720,
       pixelArt: true,
       scenes: {
         mainScene: MainScene,
       },
-      displayMode: DisplayMode.Fixed,
+      displayMode: DisplayMode.FillContainer,
       backgroundColor: Color.Black,
     });
   }
