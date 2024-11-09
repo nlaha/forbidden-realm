@@ -11,6 +11,9 @@ import {
   CharacterComponent,
   LivingComponent,
 } from "../components/character_components";
+import { game } from "../main";
+
+import characterFrag from "../shaders/character.frag";
 
 class Character extends Actor {
   isoMap: IsometricMap;
@@ -25,6 +28,13 @@ class Character extends Actor {
     this.addComponent(new BrainComponent());
     this.addComponent(new CharacterComponent());
     this.graphics.use(Characters.Worker.toSprite());
+
+    // assign custom material for outlines
+    this.graphics.material = game.graphicsContext.createMaterial({
+      name: "buildingMaterial",
+      // load from shaders/outline.frag
+      fragmentSource: characterFrag,
+    });
   }
 
   public move(pos: ex.Vector) {

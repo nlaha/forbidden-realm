@@ -6,6 +6,7 @@ import CameraController from "./utility/camera_controller";
 import Tree from "./actors/tree";
 import Character from "./actors/character";
 import Harvestable from "./actors/harvestable";
+import { compute_iso_collider } from "./utility/utils";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -84,8 +85,8 @@ class MainScene extends Scene {
       }
     }
 
-    // randomly place trees on grass tiles
-    for (let i = 0; i < 200; i++) {
+    // spawn trees on grass tiles
+    for (let i = 0; i < 500; i++) {
       const tile =
         this.isoMap.tiles[Math.floor(Math.random() * this.isoMap.tiles.length)];
       // make sure tile is > 5 tiles away from the edge
@@ -100,18 +101,32 @@ class MainScene extends Scene {
 
       if (tile.tags.has("grass")) {
         const tree = new Tree(this.isoMap, { pos: tile.pos });
-        // add random variation to tree size and a little bit of randomness to position
-        tree.scale = vec(1, 1).scale(0.5 + Math.random() * 0.5);
         this.add(tree);
+      }
+    }
+
+    // spawn rocks on dirt tiles
+    for (let i = 0; i < 10; i++) {
+      const tile =
+        this.isoMap.tiles[Math.floor(Math.random() * this.isoMap.tiles.length)];
+
+      // make sure tile is > 5 tiles away from the edge
+      if (
+        tile.x < 5 ||
+        tile.x > this.isoMap.columns - 5 ||
+        tile.y < 5 ||
+        tile.y > this.isoMap.rows - 5
+      ) {
+        continue;
       }
 
       if (tile.tags.has("dirt")) {
-        const harvestable = new Harvestable(
+        const rock = new Harvestable(
           this.isoMap,
           { pos: tile.pos },
-          Harvestables.rock1
+          Harvestables.rock1.img
         );
-        this.add(harvestable);
+        this.add(rock);
       }
     }
 

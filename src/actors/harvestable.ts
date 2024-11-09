@@ -6,6 +6,7 @@ import {
   IsometricMap,
 } from "excalibur";
 import { HarvestableResource } from "../components/harvestable_components";
+import { compute_iso_collider } from "../utility/utils";
 
 class Harvestable extends Actor {
   isoMap: IsometricMap;
@@ -19,6 +20,8 @@ class Harvestable extends Actor {
     this.addComponent(new HarvestableResource());
 
     this.graphics.use(img.toSprite());
+
+    this.collider.set(compute_iso_collider(this, this.graphics.current!));
   }
 
   public onInitialize() {}

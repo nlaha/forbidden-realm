@@ -8,13 +8,13 @@ import sand from "./images/tiles/sand.png";
 
 // import buildings
 import house1 from "./images/buildings/house1.png";
-import blacksmith from "./images/buildings/blacksmith.png"
+import blacksmith from "./images/buildings/blacksmith.png";
 import wall_left from "./images/buildings/wall_left.png";
 
 // import foliage
 import tree1 from "./images/foliage/tree1.png";
-import tree2 from "./images/foliage/tree2.png";
-import tree3 from "./images/foliage/tree3.png";
+
+// rocks
 import rock1 from "./images/foliage/rock1.png";
 
 // font
@@ -42,8 +42,6 @@ export const Fonts = {
 
 export const Foliage = {
   tree1: new ImageSource(tree1),
-  tree2: new ImageSource(tree2),
-  tree3: new ImageSource(tree3),
 } as const;
 
 export const Harvestables = {

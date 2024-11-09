@@ -4,6 +4,7 @@ import { game } from "../main";
 
 import buildingFrag from "../shaders/building.frag";
 import ProgressIndicator from "./progress_bar";
+import { compute_iso_collider } from "../utility/utils";
 
 /**
  * Building actor
@@ -108,6 +109,8 @@ class Building extends Actor {
     });
 
     this.placed = true;
+
+    this.collider.set(compute_iso_collider(this, this.graphics.current!));
   }
 }
 
