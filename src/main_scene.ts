@@ -1,11 +1,11 @@
 import { Actor, Engine, IsometricMap, Scene, vec } from "excalibur";
-import { Tiles, Buildings } from "./resources";
+import { Tiles, Buildings, Harvestables } from "./resources";
 import Building from "./actors/building";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 import CameraController from "./utility/camera_controller";
-import { WaterComponent } from "./components/water_component";
 import Tree from "./actors/tree";
 import Character from "./actors/character";
+import Harvestable from "./actors/harvestable";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -103,6 +103,15 @@ class MainScene extends Scene {
         // add random variation to tree size and a little bit of randomness to position
         tree.scale = vec(1, 1).scale(0.5 + Math.random() * 0.5);
         this.add(tree);
+      }
+
+      if (tile.tags.has("dirt")) {
+        const harvestable = new Harvestable(
+          this.isoMap,
+          { pos: tile.pos },
+          Harvestables.rock1
+        );
+        this.add(harvestable);
       }
     }
 

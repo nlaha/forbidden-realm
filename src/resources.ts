@@ -14,6 +14,7 @@ import wall_left from "./images/buildings/wall_left.png";
 import tree1 from "./images/foliage/tree1.png";
 import tree2 from "./images/foliage/tree2.png";
 import tree3 from "./images/foliage/tree3.png";
+import rock1 from "./images/foliage/rock1.png";
 
 // font
 import font from "./images/font.png";
@@ -41,6 +42,10 @@ export const Foliage = {
   tree1: new ImageSource(tree1),
   tree2: new ImageSource(tree2),
   tree3: new ImageSource(tree3),
+} as const;
+
+export const Harvestables = {
+  rock1: new ImageSource(rock1),
 } as const;
 
 export const Characters = {
@@ -73,6 +78,7 @@ for (const res of [
   Object.values(Fonts),
   Object.values(Foliage),
   Object.values(Characters),
+  Object.values(Harvestables),
 ].flat()) {
   loader.addResource(res);
 }
