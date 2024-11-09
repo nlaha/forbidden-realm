@@ -3,6 +3,7 @@ import { Buildings } from "../resources";
 import { game } from "../main";
 
 import buildingFrag from "../shaders/building.frag";
+import ProgressIndicator from "./progress_bar";
 
 /**
  * Building actor
@@ -10,6 +11,8 @@ import buildingFrag from "../shaders/building.frag";
 class Building extends Actor {
   isoMap: ex.IsometricMap;
   radius: number = 1;
+  construction_progress: number = 0;
+  placed: boolean = false;
 
   constructor(isoMap: ex.IsometricMap, pos: ex.Vector) {
     super({
@@ -27,7 +30,7 @@ class Building extends Actor {
     });
 
     // building initially has an opacity of 0.5 and follows the mouse
-    this.graphics.opacity = 0.5;
+    this.graphics.opacity = 0.25;
 
     this.on("pointermove", (evt) => {
       // snap to isoMap grid
@@ -39,12 +42,33 @@ class Building extends Actor {
     });
   }
 
+  // update
+  public update(engine: ex.Engine, delta: number) {
+    super.update(engine, delta);
+    // update construction progress
+    if (this.placed && this.construction_progress < 1) {
+      this.construction_progress += delta / 1000;
+      this.children
+        .find((child) => child instanceof ProgressIndicator)!
+        .setPercent(Math.round(this.construction_progress * 100));
+      this.graphics.opacity = 0.25 + this.construction_progress * 0.75;
+
+      if (this.construction_progress >= 1) {
+        this.children
+          .find((child) => child instanceof ProgressIndicator)!
+          .kill();
+      }
+    }
+  }
+
   public place() {
     // remove event subscriptions
     this.off("pointermove");
     this.off("pointerup");
 
-    this.graphics.opacity = 1.0;
+    // add child progress bar
+    const progressBar = new ProgressIndicator({ width: 32, height: 4 });
+    this.addChild(progressBar);
 
     // if it's on a tile, make that tile and all tiles in
     // the radius of the building solid
@@ -70,6 +94,8 @@ class Building extends Actor {
         shader.trySetUniformFloat("outlineRadius", 0.0);
       });
     });
+
+    this.placed = true;
   }
 
   public onInitialize() {
