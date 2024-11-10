@@ -65,6 +65,7 @@ class MainScene extends Scene {
     // first, add camera controller
     this.add(new CameraController());
 
+    document.getElementById("dialogue-box")!.classList.add("hidden-fade");
     document.getElementById("dialogue")!.innerText = "Welcome to the game!";
 
     // initialize status table

@@ -118,6 +118,12 @@
         display: flex;
         flex-direction: row;
         gap: 1rem;
+        transition: opacity 0.5s;
+      }
+
+      .hidden-fade {
+        opacity: 0;
+        transition: opacity 0.5s;
       }
     </style>
   </head>
@@ -126,8 +132,12 @@
     <main>
       <div class="game-container">
         <canvas id="game"></canvas>
-        <div class="dialogue-box">
-          <img src="./profile.png" alt="character profile" />
+        <div class="dialogue-box" id="dialogue-box">
+          <img
+            src="./profile.png"
+            alt="character profile"
+            id="dialogue-image"
+          />
           <p id="dialogue">Hello World!</p>
         </div>
         <div id="palette"></div>
