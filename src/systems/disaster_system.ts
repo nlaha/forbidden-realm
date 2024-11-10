@@ -17,7 +17,8 @@ import {
   LivingComponent,
   NeighborsComponent,
 } from "../components/character";
-import HarvestSystem from "./harvest_system"
+import HarvestSystem from "./harvest_system";
+import DialogueSystem from "./dialogue_system";
 import { InventoryComponent } from "../components/inventory";
 import { BuildingComponent } from "../components/building";
 import Character from "../actors/character";
@@ -88,7 +89,7 @@ class DisasterSystem extends System {
     switch (random.d4()) {
       // destroy a random building
       case 1: {
-				console.log("DISASTER: BUILDING DESTRUCTION");
+				console.log("The creations of man shall fall by my hand!");
         const buildings = this.buildingQuery.entities;
         if (buildings.length != 0) {
           const building = buildings[
@@ -112,11 +113,12 @@ class DisasterSystem extends System {
             })
             .die();
         }
+				break;
       }
 
       // kill a random human
       case 2: {
-				console.log("DISASTER: SMITE HUMAN");
+				console.log("My wrath smites your workers!");
         const humans = this.query.entities;
         if (humans.length != 0) {
           const char = humans[
@@ -133,15 +135,16 @@ class DisasterSystem extends System {
 
           char.die("lightning");
         }
+				break;
       }
 
       // make humans take longer to gather things for 1 minute
       case 3: {
-				console.log("DISASTER: SLOTH PLAGUE");
-				HarvestSystem.harvestRate = 2;
+				console.log("Your people grow tired from the slothful plague.");
+				HarvestSystem.harvestRate *= 2;
 
 				const timer = new Timer({
-					fcn: () => HarvestSystem.harvestRate = 1,
+					fcn: () => HarvestSystem.harvestRate /= 2,
 					repeats: false,
 					interval: 60000,
 				});
@@ -149,21 +152,23 @@ class DisasterSystem extends System {
 				this.world.scene.add(timer);
 
 				timer.start();
+
+				break;
       }
 
       // make humans get hungry faster for 1 minute
       case 4: {
-				console.log("DISASTER: FAMINE");
+				DialogueSystem.showText("My famine descends upon your devotees. Have they prepared for this?")
 				for (let entity of this.query.entities) {
 					const character = entity as Character;
-					character.hungerRate = 2;
+					character.hungerRate *= 2;
 				}
 
 				const timer = new Timer({
 					fcn: () => {
 						for (let entity of this.query.entities) {
 							const character = entity as Character;
-							character.hungerRate = 2;
+							character.hungerRate /= 2;
 						}
 					},
 					repeats: false,
@@ -173,6 +178,8 @@ class DisasterSystem extends System {
 				this.world.scene.add(timer);
 
 				timer.start();
+
+				break;
       }
     }
   }
