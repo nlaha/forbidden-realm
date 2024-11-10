@@ -20,6 +20,7 @@ import {
 import { InventoryComponent } from "../components/inventory";
 import { BuildingComponent } from "../components/building";
 import { Storage } from "../storage";
+import MainScene from "../main_scene";
 
 /**
  * Building actor
@@ -101,6 +102,12 @@ class Building extends Actor {
   }
 
   public die() {
+    // if the building actor is in the harvestables array, remove it
+    if (game.currentScene) {
+      const scene = game.currentScene as MainScene;
+      scene.harvestables = scene.harvestables.filter((h) => h.id !== this.id);
+    }
+
     this.kill();
   }
 
