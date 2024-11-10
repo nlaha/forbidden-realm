@@ -8,6 +8,7 @@ import {
 } from "excalibur";
 import {
   CharacterComponent,
+  CharacterRole,
   CharacterState,
   InventoryComponent,
   NeighborsComponent,
@@ -47,6 +48,18 @@ class HarvestSystem extends System {
       const characterComponent = character.get(CharacterComponent);
       const neighborsComponent = character.get(NeighborsComponent);
 
+      const characterRole = character.get(CharacterComponent).role;
+
+      if (
+        ![
+          CharacterRole.FARMER,
+          CharacterRole.MINER,
+          CharacterRole.WOODCUTTER,
+        ].includes(characterRole)
+      ) {
+        continue;
+      }
+
       // make sure our state is IDLE
       if (characterComponent.state !== CharacterState.IDLE) {
         continue;
@@ -57,7 +70,7 @@ class HarvestSystem extends System {
         continue;
       }
 
-      const harvestables = neighborsComponent.getWithComponent(
+      let harvestables = neighborsComponent.getWithComponent(
         HarvestableResourceComponent
       );
 
@@ -65,6 +78,14 @@ class HarvestSystem extends System {
       if (harvestables.length === 0) {
         continue;
       }
+
+      // filter harvestables that match the character's role
+      harvestables = harvestables.filter((harvestable) => {
+        const harvestableComponent = harvestable.get(
+          HarvestableResourceComponent
+        );
+        return harvestableComponent.harvestableBy.includes(characterRole);
+      });
 
       const closestHarvestable = closest_entity(character, harvestables);
 

@@ -43,17 +43,17 @@ class Building extends Actor {
 
     this.graphics.use(img.toSprite());
 
-    // assign custom material for outlines
-    this.graphics.material = game.graphicsContext.createMaterial({
-      name: "buildingMaterial",
-      // load from shaders/outline.frag
-      fragmentSource: buildingFrag,
-    });
+    // // assign custom material for outlines
+    // this.graphics.material = game.graphicsContext.createMaterial({
+    //   name: "buildingMaterial",
+    //   // load from shaders/outline.frag
+    //   fragmentSource: buildingFrag,
+    // });
 
     // building initially has an opacity of 0.5 and follows the mouse
     this.graphics.opacity = 0.25;
 
-    this.pointer.useGraphicsBounds = true;
+    // this.pointer.useGraphicsBounds = true;
 
     this.on("pointerup", (evt) => {
       // make sure the building is placed on a tile
@@ -122,18 +122,18 @@ class Building extends Actor {
       }
     }
 
-    // highlight the building when hovered
-    this.on("pointerenter", () => {
-      this.graphics.material!.update((shader) => {
-        shader.trySetUniformFloat("outlineRadius", 2.0);
-      });
-    });
+    // // highlight the building when hovered
+    // this.on("pointerenter", () => {
+    //   this.graphics.material!.update((shader) => {
+    //     shader.trySetUniformFloat("outlineRadius", 2.0);
+    //   });
+    // });
 
-    this.on("pointerleave", () => {
-      this.graphics.material!.update((shader) => {
-        shader.trySetUniformFloat("outlineRadius", 0.0);
-      });
-    });
+    // this.on("pointerleave", () => {
+    //   this.graphics.material!.update((shader) => {
+    //     shader.trySetUniformFloat("outlineRadius", 0.0);
+    //   });
+    // });
 
     this.placed = true;
 

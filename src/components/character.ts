@@ -70,12 +70,19 @@ export enum CharacterState {
   IDLE,
   HARVESTING,
   DEPOSITING,
-  LOST,
+}
+
+export enum CharacterRole {
+  MINER,
+  FARMER,
+  WOODCUTTER,
 }
 
 export class CharacterComponent extends Component {
   public first_name: string;
   public last_name: string;
+
+  public role: CharacterRole = CharacterRole.MINER;
 
   public state: CharacterState = CharacterState.IDLE;
 

@@ -28,8 +28,6 @@ function stateToString(state: CharacterState): string {
       return "HARVESTING";
     case CharacterState.DEPOSITING:
       return "DEPOSITING";
-    case CharacterState.LOST:
-      return "LOST";
     default:
       return "UNKNOWN";
   }
@@ -115,7 +113,6 @@ class CharacterStateSystem extends System {
       );
       if (harvestables.length > 0) {
         character.walkTo(harvestables[0].get(TransformComponent)!.pos);
-        characterComponent.state = CharacterState.WALKING;
       } else {
         // pick a random tile
         const randomTile = isoMap.getTile(
@@ -125,7 +122,6 @@ class CharacterStateSystem extends System {
 
         // walk to the random tile
         character.walkTo(randomTile!.pos);
-        characterComponent.state = CharacterState.WALKING;
       }
     }
   }

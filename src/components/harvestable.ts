@@ -1,8 +1,11 @@
 import { Component } from "excalibur";
+import { CharacterRole } from "./character";
 
 export class HarvestableResourceComponent extends Component {
   public resourceType: string;
   public amount: number;
+
+  public harvestableBy: CharacterRole[] = [];
 
   public onInitialize() {}
 

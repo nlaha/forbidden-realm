@@ -12,6 +12,8 @@ import Green from "./images/tiles/green.png";
 import house1 from "./images/buildings/house1.png";
 import blacksmith from "./images/buildings/blacksmith.png";
 import bridge from "./images/buildings/bridge.png";
+import farm_healthy from "./images/buildings/farm_healthy.png";
+import farm_dying from "./images/buildings/farm_dying.png";
 
 // import foliage
 import tree1 from "./images/foliage/tree1.png";
@@ -24,8 +26,10 @@ import font from "./images/font.png";
 
 // import characters
 import human from "./images/characters/human.png";
+
 import Depot from "./actors/buildings/depot";
 import Building from "./actors/building";
+import Rock from "./actors/harvestables/rock";
 
 export const Tiles = {
   Dirt: new ImageSource(dirt),
@@ -47,7 +51,7 @@ export const Buildings = {
   Blacksmith: {
     name: "Blacksmith",
     img: new ImageSource(blacksmith),
-    type: Depot,
+    type: Building,
     walkability: -1,
     cost: 500,
   },
@@ -57,6 +61,13 @@ export const Buildings = {
     type: Building,
     walkability: 0,
     cost: 800,
+  },
+  Farm: {
+    name: "Farm",
+    img: new ImageSource(farm_healthy),
+    type: Building,
+    walkability: 0,
+    cost: 400,
   },
 } as const;
 
@@ -69,7 +80,10 @@ export const Foliage = {
 } as const;
 
 export const Harvestables = {
-  rock1: new ImageSource(rock1),
+  rock1: {
+    img: new ImageSource(rock1),
+    type: Rock,
+  },
 } as const;
 
 export const Characters = {
@@ -90,6 +104,7 @@ export const spriteFont = new SpriteFont({
   alphabet: "0123456789abcdefghijklmnopqrstuvwxyz,!'&.\"?- ",
   caseInsensitive: true,
   spriteSheet: spriteFontSheet,
+  spacing: -6,
 });
 
 export const loader = new Loader();
@@ -102,7 +117,7 @@ for (const res of [
   Object.values(Fonts),
   Object.values(Foliage),
   Object.values(Characters),
-  Object.values(Harvestables),
+  Object.values(Harvestables).map((h) => h.img),
 ].flat()) {
   loader.addResource(res);
 }

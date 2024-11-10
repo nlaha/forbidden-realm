@@ -107,7 +107,6 @@ class DepotSystem extends System {
       const building = buildingsWithCapacity[0];
 
       character.walkTo(building.get(TransformComponent).pos);
-      characterComponent.state = CharacterState.WALKING;
     }
   }
 }

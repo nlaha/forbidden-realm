@@ -51,8 +51,8 @@ class MainScene extends Scene {
       pos: vec(500, 200),
       tileWidth: 32,
       tileHeight: 16,
-      columns: 32,
-      rows: 32,
+      columns: 48,
+      rows: 48,
     });
 
     this.navgrid = init_navgrid(this.isoMap);
@@ -120,10 +120,10 @@ class MainScene extends Scene {
 
     // spawn rocks on dirt tiles
     spawner(5, 4, this.isoMap, "dirt").forEach((pos) => {
-      const rock = new Harvestable(
+      const rock = new Harvestables.rock1.type(
         this.isoMap,
         { pos: pos },
-        Harvestables.rock1,
+        Harvestables.rock1.img,
         "rock"
       );
       this.add(rock);

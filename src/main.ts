@@ -37,4 +37,7 @@ class Game extends Engine {
 }
 
 export const game = new Game();
+
+game.graphicsContext.smoothing = false;
+
 game.initialize();

@@ -59,6 +59,7 @@ class Character extends Actor {
     this.addComponent(new CharacterComponent());
     this.addComponent(new InventoryComponent());
     this.addComponent(new VisionComponent());
+    this.addComponent(new NeighborsComponent());
 
     this.graphics.use(spriteSheet.getSprite(0, 0));
 
@@ -84,13 +85,6 @@ class Character extends Actor {
         this.graphics.use(spriteSheet.getSprite(0, 0));
       } else {
         this.graphics.use(spriteSheet.getSprite(2, 0));
-      }
-    }
-
-    if (this.get(CharacterComponent).state === CharacterState.WALKING) {
-      // if we're walking, check if we're done
-      if (this.actions.getQueue().isComplete()) {
-        this.get(CharacterComponent).state = CharacterState.IDLE;
       }
     }
   }
@@ -153,7 +147,6 @@ class Character extends Actor {
           this.get(CharacterComponent).first_name
         } going from ${start.x}, ${start.y} to ${end.x}, ${end.y}`
       );
-      this.get(CharacterComponent).state = CharacterState.LOST;
 
       return;
     }
@@ -166,6 +159,12 @@ class Character extends Actor {
         100
       );
     }
+
+    this.actions.callMethod(() => {
+      this.get(CharacterComponent).state = CharacterState.IDLE;
+    });
+
+    this.get(CharacterComponent).state = CharacterState.WALKING;
   }
 
   public onInitialize() {}

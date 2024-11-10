@@ -28,13 +28,14 @@ class Depot extends Building {
 
     // add inventory component
     this.addComponent(new InventoryComponent());
+    this.get(InventoryComponent).capacity = 10;
 
     // add label showing the building inventory capacity
     const label = new Label({
       text: "0/0",
-      pos: vec(0, 0),
-      color: Color.White,
-      font: new Font({ size: 10 }),
+      pos: vec(-10, 0),
+      color: Color.fromHex("#ffa618"),
+      font: new Font({ size: 15, family: "Alagard" }),
       z: 1000,
     });
 
