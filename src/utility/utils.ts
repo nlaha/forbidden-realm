@@ -100,6 +100,10 @@ export function mark_tiles_as_solid(isoMap: IsometricMap) {
 
   // for each tile, check if it intersects with any collider
   for (let tile of tiles) {
+    if (tile.hasTag("building")) {
+      tile.removeTag("building");
+    }
+
     // water is also -1
     if (tile.tags.has("water")) {
       (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
@@ -107,16 +111,26 @@ export function mark_tiles_as_solid(isoMap: IsometricMap) {
       continue;
     }
 
+    let isSolid = false;
     for (let collider of colliders) {
       // get world position of tile
       const worldPos = tile.center;
 
       // check if the collider intersects with the tile
       if (collider.collider.get()?.contains(worldPos)) {
-        tile.solid = true;
-        (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
+        isSolid = true;
         //tile.addGraphic(Tiles.Red.toSprite());
       }
+    }
+
+    if (isSolid) {
+      tile.solid = true;
+      (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
+      tile.addGraphic(Tiles.Red.toSprite());
+    } else {
+      tile.solid = false;
+      (game.currentScene as MainScene).navgrid![tile.y][tile.x] = 0;
+      tile.addGraphic(Tiles.Green.toSprite());
     }
   }
 }
@@ -132,6 +146,7 @@ export function mark_tile_solid_single(
   // search in a radius around the actor
   const isoCoords = isoMap.worldToTile(actor.pos);
   const radius = 10;
+  const tilesToMark: IsometricTile[] = [];
 
   for (let x = -radius; x <= radius; x++) {
     for (let y = -radius; y <= radius; y++) {
@@ -141,13 +156,32 @@ export function mark_tile_solid_single(
       }
       // check if the collider intersects with the tile
       if (actor.collider.get()?.contains(tile.pos)) {
-        tile.solid = walkability === -1;
-        // update navgrid
-        (game.currentScene as MainScene).navgrid![tile.y][tile.x] = walkability;
-        //tile.addGraphic(Tiles.Red.toSprite());
+        tilesToMark.push(tile);
       }
     }
   }
+
+  // if any of the tiles to mark are solid, return false
+  for (let tile of tilesToMark) {
+    if ((tile.solid && !tile.tags.has("water")) || tile.tags.has("building")) {
+      console.log(
+        `Can't place building because of the following state: ${
+          tile.solid
+        }, ${tile.tags.has("building")}, ${tile.tags.has("water")}`
+      );
+      return false;
+    }
+  }
+
+  for (let tile of tilesToMark) {
+    tile.solid = walkability === -1;
+    tile.addTag("building");
+    // update navgrid
+    (game.currentScene as MainScene).navgrid![tile.y][tile.x] = walkability;
+    //tile.addGraphic(Tiles.Red.toSprite());
+  }
+
+  return true;
 }
 
 /**

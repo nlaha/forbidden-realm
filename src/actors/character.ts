@@ -129,6 +129,7 @@ class Character extends Actor {
       cause: `Died by ${cause}`,
     });
     this.get(CharacterComponent).state = CharacterState.DEAD;
+    (this.scene as MainScene).status_table.deleteRow(this.id);
     this.kill();
   }
 

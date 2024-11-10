@@ -22,6 +22,7 @@ import { BuildingComponent } from "../components/building";
 import Character from "../actors/character";
 import { Effects } from "../resources";
 import Building from "../actors/building";
+import { mark_tiles_as_solid } from "../utility/utils";
 
 const random = new Random();
 
@@ -98,10 +99,17 @@ class DisasterSystem extends System {
           });
           lightning.graphics.use(lightningAnim);
           this.world.scene.add(lightning);
-          lightning.actions.delay(1000).die();
           lightning.z = 2000;
 
+          const isoMap = building.isoMap;
           building.die();
+
+          lightning.actions
+            .delay(1000)
+            .callMethod(() => {
+              mark_tiles_as_solid(isoMap);
+            })
+            .die();
         }
       }
 

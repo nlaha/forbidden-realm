@@ -85,46 +85,48 @@ class UIUpdateSystem extends System {
       return;
     }
 
-    const newData = this.query.entities.map((entity, idx) => {
-      const character = entity as Character;
-      const characterComponent = character.get(CharacterComponent);
-      const inventoryComponent = character.get(InventoryComponent);
-      const visionComponent = character.get(VisionComponent);
-      const livingComponent = character.get(LivingComponent);
+    let newData = this.query.entities
+      .map((entity, idx) => {
+        const character = entity as Character;
+        const characterComponent = character.get(CharacterComponent);
+        const inventoryComponent = character.get(InventoryComponent);
+        const visionComponent = character.get(VisionComponent);
+        const livingComponent = character.get(LivingComponent);
 
-      const invString = Array.from(inventoryComponent.items.keys())
-        .filter((key) => inventoryComponent.items.get(key)! > 0)
-        .map((key) => key.repeat(inventoryComponent.items.get(key) ?? 0))
-        .join("");
+        const invString = Array.from(inventoryComponent.items.keys())
+          .filter((key) => inventoryComponent.items.get(key)! > 0)
+          .map((key) => key.repeat(inventoryComponent.items.get(key) ?? 0))
+          .join("");
 
-      return {
-        id: idx,
-        eid: character.id,
-        name: characterComponent.first_name,
-        state: characterComponent.state,
-        health: livingComponent.health,
-        food: livingComponent.food,
-        inventory: invString,
-        vision: visionComponent.visibleEntities.size,
-      };
-    });
+        return {
+          id: character.id,
+          name: characterComponent.first_name,
+          state: characterComponent.state,
+          role: characterComponent.role,
+          health: livingComponent.health,
+          food: livingComponent.food,
+          inventory: invString,
+          vision: visionComponent.visibleEntities.size,
+        };
+      })
+      .filter((data) => data.state !== CharacterState.DEAD);
 
     if (scene.status_table.getData().length === 0) {
-      // add default role
-      newData.forEach((data) => {
-        data["role"] = CharacterRole.MINER;
-      });
       scene.status_table.setData(newData);
     } else {
-      scene.status_table.updateData(newData);
-
-      // if any characters are dead, remove them from the table
-      const deadCharacters = newData.filter(
-        (data) => data.state === CharacterState.DEAD
-      );
-      deadCharacters.forEach((dead) => {
-        scene.status_table.deleteRow(dead.id);
+      // remove role column
+      const dataUpdate = newData.map((data) => {
+        return {
+          id: data.id,
+          name: data.name,
+          state: data.state,
+          health: data.health,
+          food: data.food,
+          inventory: data.inventory,
+          vision: data.vision,
+        };
       });
+      scene.status_table.updateData(dataUpdate);
     }
   }
 }

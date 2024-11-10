@@ -68,7 +68,7 @@ export const Buildings = {
     img: new ImageSource(bridge),
     type: Building,
     walkability: 0,
-    cost: new Map([]),
+    cost: new Map([["🪵", 1]]),
   },
   Farm: {
     name: "Farm",

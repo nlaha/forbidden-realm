@@ -51,17 +51,8 @@ class Building extends Actor {
 
     this.graphics.use(img.toSprite());
 
-    // // assign custom material for outlines
-    // this.graphics.material = game.graphicsContext.createMaterial({
-    //   name: "buildingMaterial",
-    //   // load from shaders/outline.frag
-    //   fragmentSource: buildingFrag,
-    // });
-
     // building initially has an opacity of 0.5 and follows the mouse
     this.graphics.opacity = 0.25;
-
-    // this.pointer.useGraphicsBounds = true;
 
     this.on("pointerup", (evt) => {
       // make sure the building is placed on a tile
@@ -110,15 +101,12 @@ class Building extends Actor {
   }
 
   public die() {
-    mark_tiles_as_solid(this.isoMap);
     this.kill();
   }
 
   public place() {
     // check storage to see if we have enough resources
-    if (Storage.canAfford(this.cost)) {
-      Storage.pay(this.cost, this.scene!.world);
-    } else {
+    if (!Storage.canAfford(this.cost)) {
       console.log("Not enough resources");
       return;
     }
@@ -131,38 +119,23 @@ class Building extends Actor {
     const progressBar = new ProgressIndicator({ width: 32, height: 4 });
     this.addChild(progressBar);
 
-    // if it's on a tile, make that tile and all tiles in
-    // the radius of the building solid
-    const isoCoords = this.isoMap.worldToTile(this.pos);
-    for (let x = -this.radius; x <= this.radius; x++) {
-      for (let y = -this.radius; y <= this.radius; y++) {
-        const tile = this.isoMap.getTile(isoCoords.x + x, isoCoords.y + y);
-        if (tile) {
-          tile.solid = true;
-        }
-      }
-    }
-
-    // // highlight the building when hovered
-    // this.on("pointerenter", () => {
-    //   this.graphics.material!.update((shader) => {
-    //     shader.trySetUniformFloat("outlineRadius", 2.0);
-    //   });
-    // });
-
-    // this.on("pointerleave", () => {
-    //   this.graphics.material!.update((shader) => {
-    //     shader.trySetUniformFloat("outlineRadius", 0.0);
-    //   });
-    // });
-
     this.placed = true;
 
     this.collider.set(compute_iso_collider(this.graphics.current!));
 
     // mark tiles as solid
-    mark_tile_solid_single(this.isoMap, this, this.walkability);
-    console.log(`Marking tiles with walkability ${this.walkability}`);
+    const canPlace = mark_tile_solid_single(
+      this.isoMap,
+      this,
+      this.walkability
+    );
+
+    if (!canPlace) {
+      this.die();
+      return;
+    }
+
+    Storage.pay(this.cost, this.scene!.world);
   }
 }
 

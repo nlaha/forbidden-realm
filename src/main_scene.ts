@@ -23,7 +23,7 @@ import DepotSystem from "./systems/depo_system";
 import NeighborSystem from "./systems/neighbor_system";
 import UIUpdateSystem from "./systems/ui_update_system";
 import DisasterSystem from "./systems/disaster_system";
-import { CharacterComponent } from "./components/character";
+import { CharacterComponent, CharacterRole } from "./components/character";
 
 import { Storage } from "./storage";
 import EatSystem from "./systems/eat_system";
@@ -74,7 +74,7 @@ class MainScene extends Scene {
       layout: "fitColumns", //fit columns to width of table (optional)
       columns: [
         //Define Table Columns
-        { title: "ID", field: "eid", width: 50 },
+        { title: "ID", field: "id", width: 50 },
         { title: "Name", field: "name", width: 150 },
         { title: "State", field: "state" },
         {
@@ -218,8 +218,20 @@ class MainScene extends Scene {
     mark_tiles_as_solid(this.isoMap);
 
     // spawn humans in random locations
-    spawner(1, 3, this.isoMap, "grass").forEach((pos) => {
+    Array.from(spawner(1, 3, this.isoMap, "grass")).forEach((pos, idx) => {
       const human = new Character(this.isoMap, { pos: pos });
+      console.log(idx);
+      switch (idx) {
+        case 0:
+          human.get(CharacterComponent).role = CharacterRole.WOODCUTTER;
+          break;
+        case 1:
+          human.get(CharacterComponent).role = CharacterRole.MINER;
+          break;
+        case 2:
+          human.get(CharacterComponent).role = CharacterRole.MINER;
+          break;
+      }
       this.add(human);
     });
 
