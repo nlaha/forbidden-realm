@@ -130,6 +130,10 @@ class Character extends Actor {
     });
     this.get(CharacterComponent).state = CharacterState.DEAD;
     (this.scene as MainScene).status_table.deleteRow(this.id);
+
+    // remove all items from inventory
+    this.get(InventoryComponent).clearInventory();
+
     this.kill();
   }
 
@@ -200,11 +204,11 @@ class Character extends Actor {
     });
 
     if (path === null) {
-      console.warn(
-        `No path found for ${
-          this.get(CharacterComponent).first_name
-        } going from ${start.x}, ${start.y} to ${end.x}, ${end.y}`
-      );
+      // console.warn(
+      //   `No path found for ${
+      //     this.get(CharacterComponent).first_name
+      //   } going from ${start.x}, ${start.y} to ${end.x}, ${end.y}`
+      // );
 
       this.get(CharacterComponent).state = CharacterState.IDLE;
       return;

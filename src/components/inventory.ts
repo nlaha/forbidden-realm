@@ -22,8 +22,9 @@ export class InventoryComponent extends Component {
   }
 
   public clearInventory() {
-    for (let item of this.items.keys()) {
-      Storage.removeResource(item, this.items.get(item)!);
+    console.log("Clearing inventory");
+    for (const [item, count] of this.items.entries()) {
+      Storage.removeResource(item, count);
     }
     this.items.clear();
   }
