@@ -17,7 +17,7 @@ import {
   LivingComponent,
   NeighborsComponent,
 } from "../components/character";
-import HarvestSystem from "./harvest_system"
+import HarvestSystem from "./harvest_system";
 import { InventoryComponent } from "../components/inventory";
 import { BuildingComponent } from "../components/building";
 import Character from "../actors/character";
@@ -88,7 +88,7 @@ class DisasterSystem extends System {
     switch (random.d4()) {
       // destroy a random building
       case 1: {
-				console.log("DISASTER: BUILDING DESTRUCTION");
+        console.log("DISASTER: BUILDING DESTRUCTION");
         const buildings = this.buildingQuery.entities;
         if (buildings.length != 0) {
           const building = buildings[
@@ -116,7 +116,7 @@ class DisasterSystem extends System {
 
       // kill a random human
       case 2: {
-				console.log("DISASTER: SMITE HUMAN");
+        console.log("DISASTER: SMITE HUMAN");
         const humans = this.query.entities;
         if (humans.length != 0) {
           const char = humans[
@@ -137,42 +137,42 @@ class DisasterSystem extends System {
 
       // make humans take longer to gather things for 1 minute
       case 3: {
-				console.log("DISASTER: SLOTH PLAGUE");
-				HarvestSystem.harvestRate = 2;
+        console.log("DISASTER: SLOTH PLAGUE");
+        HarvestSystem.harvestRate = 2;
 
-				const timer = new Timer({
-					fcn: () => HarvestSystem.harvestRate = 1,
-					repeats: false,
-					interval: 60000,
-				});
+        const timer = new Timer({
+          fcn: () => (HarvestSystem.harvestRate = 1),
+          repeats: false,
+          interval: 60000,
+        });
 
-				this.world.scene.add(timer);
+        this.world.scene.add(timer);
 
-				timer.start();
+        timer.start();
       }
 
       // make humans get hungry faster for 1 minute
       case 4: {
-				console.log("DISASTER: FAMINE");
-				for (let entity of this.query.entities) {
-					const character = entity as Character;
-					character.hungerRate = 2;
-				}
+        console.log("DISASTER: FAMINE");
+        for (let entity of this.query.entities) {
+          const character = entity as Character;
+          character.hungerRate = 2;
+        }
 
-				const timer = new Timer({
-					fcn: () => {
-						for (let entity of this.query.entities) {
-							const character = entity as Character;
-							character.hungerRate = 2;
-						}
-					},
-					repeats: false,
-					interval: 60000,
-				});
+        const timer = new Timer({
+          fcn: () => {
+            for (let entity of this.query.entities) {
+              const character = entity as Character;
+              character.hungerRate = 2;
+            }
+          },
+          repeats: false,
+          interval: 60000,
+        });
 
-				this.world.scene.add(timer);
+        this.world.scene.add(timer);
 
-				timer.start();
+        timer.start();
       }
     }
   }

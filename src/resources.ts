@@ -118,8 +118,8 @@ export const Buildings = {
     type: Church,
     walkability: -1,
     cost: new Map([
-      ["🪵", 0],
-      ["🪨", 1],
+      ["🪵", 8],
+      ["🪨", 8],
     ]),
   },
 } as const;

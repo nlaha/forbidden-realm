@@ -70,13 +70,11 @@ class UIUpdateSystem extends System {
 
     if (scene.deaths.length > 0) {
       obituaryTable.innerHTML = `
-        <table>
             <tr>
                 <th>Name</th>
                 <th>Cause</th>
             </tr>
             ${obituaryData.join("")}
-        </table>
         `;
     }
 

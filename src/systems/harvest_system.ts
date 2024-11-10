@@ -18,6 +18,7 @@ import Character from "../actors/character";
 import { HarvestableResourceComponent } from "../components/harvestable";
 import Harvestable from "../actors/harvestable";
 import { closest_entity } from "../utility/utils";
+import { HarvestRateIncreaseComponent } from "../components/harvestRateIncrease";
 
 class HarvestSystem extends System {
   query: Query<
@@ -26,6 +27,8 @@ class HarvestSystem extends System {
     | typeof NeighborsComponent
     | typeof VisionComponent
   >;
+
+  harvestRateQuery: Query<typeof HarvestRateIncreaseComponent>;
 
   public info_table: string | null = null;
 
@@ -39,6 +42,8 @@ class HarvestSystem extends System {
       NeighborsComponent,
       VisionComponent,
     ]);
+
+    this.harvestRateQuery = world.query([HarvestRateIncreaseComponent]);
   }
   // Lower numbers mean higher priority
   // 99 is low priority
@@ -118,8 +123,13 @@ class HarvestSystem extends System {
       if (closestHarvestable) {
         characterComponent.state = CharacterState.HARVESTING;
 
+        // add up the harvest rate increase
+        const harvestRateIncrease = 100 * this.harvestRateQuery.entities.length;
+        const baseDelay = 5000 * HarvestSystem.harvestRate;
+        const harvestDelay = baseDelay - harvestRateIncrease;
+
         // after the delay, harvest the resource
-        character.actions.delay(5000 * HarvestSystem.harvestRate).callMethod(() => {
+        character.actions.delay(harvestDelay).callMethod(() => {
           const inventory = character.get(InventoryComponent);
           const harvestable = closestHarvestable as Harvestable;
           const harvestableComponent = harvestable.get(

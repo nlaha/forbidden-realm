@@ -91,6 +91,7 @@ class DepotSystem extends System {
         character.actions.delay(1000).callMethod(() => {
           const item = inventory.removeItem();
           if (!item) {
+            characterComponent.state = CharacterState.IDLE;
             return;
           }
           buildingInventory.addItem(item);

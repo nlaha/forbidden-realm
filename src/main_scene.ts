@@ -108,8 +108,9 @@ class MainScene extends Scene {
           field: "role",
           editor: "list",
           cellEdited: function (cell) {
+            console.log(`Changing role for ${cell.getData().id}`);
             const entity = engine.currentScene.world.entityManager.getById(
-              cell.getRow().getData().eid
+              cell.getData().id
             );
             const character = entity as Character;
             const characterComponent = character.get(CharacterComponent);
