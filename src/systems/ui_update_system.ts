@@ -83,35 +83,38 @@ class UIUpdateSystem extends System {
       return;
     }
 
-    let newData = this.query.entities
-      .map((entity, idx) => {
-        const character = entity as Character;
-        const characterComponent = character.get(CharacterComponent);
-        const inventoryComponent = character.get(InventoryComponent);
-        const visionComponent = character.get(VisionComponent);
-        const livingComponent = character.get(LivingComponent);
+    let newData = this.query.entities.map((entity, idx) => {
+      const character = entity as Character;
+      const characterComponent = character.get(CharacterComponent);
+      const inventoryComponent = character.get(InventoryComponent);
+      const visionComponent = character.get(VisionComponent);
+      const livingComponent = character.get(LivingComponent);
 
-        const invString = Array.from(inventoryComponent.items.keys())
-          .filter((key) => inventoryComponent.items.get(key)! > 0)
-          .map((key) => key.repeat(inventoryComponent.items.get(key) ?? 0))
-          .join("");
+      const invString = Array.from(inventoryComponent.items.keys())
+        .filter((key) => inventoryComponent.items.get(key)! > 0)
+        .map((key) => key.repeat(inventoryComponent.items.get(key) ?? 0))
+        .join("");
 
-        return {
-          id: character.id,
-          name: characterComponent.first_name,
-          state: characterComponent.state,
-          role: characterComponent.role,
-          health: livingComponent.health,
-          food: livingComponent.food,
-          inventory: invString,
-          vision: visionComponent.visibleEntities.size,
-        };
-      })
-      .filter((data) => data.state !== CharacterState.DEAD);
+      return {
+        id: character.id,
+        name: characterComponent.first_name,
+        state: characterComponent.state,
+        role: characterComponent.role,
+        health: livingComponent.health,
+        food: livingComponent.food,
+        inventory: invString,
+        vision: visionComponent.visibleEntities.size,
+      };
+    });
 
     // if we can't find the entity ID in the table, add it
     const currentIds = scene.status_table.getData().map((data) => data.id);
     for (let data of newData) {
+      // if the state is dead, remove the character from the table
+      if (data.state === CharacterState.DEAD) {
+        scene.status_table.deleteRow(data.id);
+        continue;
+      }
       if (!currentIds.includes(data.id)) {
         scene.status_table.addRow(data);
       } else {
