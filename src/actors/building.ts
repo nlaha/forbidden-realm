@@ -24,9 +24,14 @@ class Building extends Actor {
   radius: number = 1;
   construction_progress: number = 0;
   placed: boolean = false;
-  label: Label;
+  walkability: number = -1;
 
-  constructor(isoMap: ex.IsometricMap, pos: ex.Vector, img: ImageSource) {
+  constructor(
+    isoMap: ex.IsometricMap,
+    pos: ex.Vector,
+    img: ImageSource,
+    walkability: number
+  ) {
     super({
       x: pos.x,
       y: pos.y,
@@ -35,20 +40,6 @@ class Building extends Actor {
     this.isoMap = isoMap;
 
     this.addComponent(new IsometricEntityComponent(this.isoMap));
-    this.addComponent(new InventoryComponent());
-    this.addComponent(new BuildingComponent());
-
-    // add nametag showing the building inventory capacity
-    const label = new Label({
-      text: "0/0",
-      pos: vec(0, 0),
-      color: Color.White,
-      font: new Font({ size: 10 }),
-      z: 1000,
-    });
-
-    this.addChild(label);
-    this.label = label;
 
     this.graphics.use(img.toSprite());
 
@@ -62,10 +53,7 @@ class Building extends Actor {
     // building initially has an opacity of 0.5 and follows the mouse
     this.graphics.opacity = 0.25;
 
-    this.on("pointermove", (evt) => {
-      // snap to isoMap grid
-      this.pos = this.isoMap.tileToWorld(this.isoMap.worldToTile(evt.worldPos));
-    });
+    this.pointer.useGraphicsBounds = true;
 
     this.on("pointerup", (evt) => {
       // make sure the building is placed on a tile
@@ -79,11 +67,26 @@ class Building extends Actor {
         this.place();
       }
     });
+
+    this.walkability = walkability;
+  }
+
+  public onConstructionDone() {
+    this.addComponent(new BuildingComponent());
+    this.children.find((child) => child instanceof ProgressIndicator)!.kill();
   }
 
   // update
   public update(engine: ex.Engine, delta: number) {
     super.update(engine, delta);
+
+    if (!this.placed) {
+      const pointerWorldPos = engine.input.pointers.primary.lastWorldPos;
+      this.pos = this.isoMap.tileToWorld(
+        this.isoMap.worldToTile(pointerWorldPos)
+      );
+    }
+
     // update construction progress
     if (this.placed && this.construction_progress < 1) {
       this.construction_progress += delta / 1000;
@@ -93,15 +96,9 @@ class Building extends Actor {
       this.graphics.opacity = 0.25 + this.construction_progress * 0.75;
 
       if (this.construction_progress >= 1) {
-        this.children
-          .find((child) => child instanceof ProgressIndicator)!
-          .kill();
+        this.onConstructionDone();
       }
     }
-
-    // update label
-    const inventory = this.get(InventoryComponent);
-    this.label.text = `${inventory.items.length}/${inventory.capacity}`;
   }
 
   public place() {
@@ -143,7 +140,8 @@ class Building extends Actor {
     this.collider.set(compute_iso_collider(this.graphics.current!));
 
     // mark tiles as solid
-    mark_tile_solid_single(this.isoMap, this);
+    mark_tile_solid_single(this.isoMap, this, this.walkability);
+    console.log(`Marking tiles with walkability ${this.walkability}`);
   }
 }
 

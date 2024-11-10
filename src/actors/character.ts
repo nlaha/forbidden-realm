@@ -15,6 +15,7 @@ import {
   CharacterState,
   InventoryComponent,
   LivingComponent,
+  NeighborsComponent,
   VisionComponent,
 } from "../components/character";
 import { game } from "../main";
@@ -36,6 +37,7 @@ let selectedCharacter: Character | null = null;
 
 class Character extends Actor {
   isoMap: IsometricMap;
+  spriteSheet: SpriteSheet;
 
   constructor(isoMap: IsometricMap, config: ActorArgs) {
     super(config);
@@ -48,8 +50,9 @@ class Character extends Actor {
     this.addComponent(new CharacterComponent());
     this.addComponent(new InventoryComponent());
     this.addComponent(new VisionComponent());
+    this.addComponent(new NeighborsComponent());
 
-    const spriteSheet = SpriteSheet.fromImageSource({
+    this.spriteSheet = SpriteSheet.fromImageSource({
       image: Characters.Human,
       grid: {
         rows: 4,
@@ -59,7 +62,7 @@ class Character extends Actor {
       },
     });
 
-    this.graphics.use(spriteSheet.getSprite(0, 0));
+    this.graphics.use(this.spriteSheet.getSprite(0, 0));
 
     // add character name to the graphics
     const nameTag = new NameTag(
@@ -71,9 +74,6 @@ class Character extends Actor {
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
-
-    // we recover energy over time
-    this.get(LivingComponent).energy += delta / 100;
 
     if (this.get(CharacterComponent).state === CharacterState.WALKING) {
       // if we're walking, check if we're done
@@ -99,7 +99,7 @@ class Character extends Actor {
 
     // if end isn't walkable, find the nearest walkable tile
     // searching out in the spiral pattern from the target tile
-    const maxRadius = 10;
+    const maxRadius = 25;
     let found = false;
     for (let radius = 1; radius < maxRadius; radius++) {
       for (let x = -radius; x <= radius; x++) {
@@ -128,7 +128,7 @@ class Character extends Actor {
     // get main scene
     const scene = game.currentScene as MainScene;
     const path = search({
-      cutCorners: false,
+      cutCorners: true,
       diagonal: false,
       from: [start.x, start.y],
       to: [end.x, end.y],
@@ -136,18 +136,15 @@ class Character extends Actor {
     });
 
     if (path === null) {
-      console.warn("No path found");
+      console.warn(
+        `No path found for ${
+          this.get(CharacterComponent).first_name
+        } going from ${start.x}, ${start.y} to ${end.x}, ${end.y}`
+      );
+      this.get(CharacterComponent).state = CharacterState.LOST;
+
       return;
     }
-
-    // check if we have enough energy to walk the path
-    if (this.get(LivingComponent).energy < path.length) {
-      console.warn("Not enough energy to walk the path");
-      return;
-    }
-
-    // subtract energy depending on path length
-    this.get(LivingComponent).energy -= path.length;
 
     // move along the path
     for (let i = 0; i < path.length; i++) {

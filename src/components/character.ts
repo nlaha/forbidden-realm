@@ -4,7 +4,6 @@ import { female_names, male_names } from "../tables/names";
 export class LivingComponent extends Component {
   public health: number = 100;
   public maxHealth: number = 100;
-  public energy: number = 100;
 
   public isDead(): boolean {
     return this.health <= 0;
@@ -22,10 +21,6 @@ export class LivingComponent extends Component {
     if (this.health > this.maxHealth) {
       this.health = this.maxHealth;
     }
-  }
-
-  public canAct(): boolean {
-    return this.energy >= 100;
   }
 
   public onAdd() {}
@@ -74,6 +69,8 @@ export enum CharacterState {
   WALKING,
   IDLE,
   HARVESTING,
+  DEPOSITING,
+  LOST,
 }
 
 export class CharacterComponent extends Component {
@@ -101,6 +98,21 @@ export class VisionComponent extends Component {
     component: new () => T
   ): Entity[] {
     return Array.from(this.visibleEntities).filter((e): e is Entity =>
+      e.has(component)
+    );
+  }
+}
+
+export class NeighborsComponent extends Component {
+  public range: number = 50;
+
+  public neighbors: Set<Entity> = new Set();
+
+  // Gets all visible entities that have the given component
+  public getWithComponent<T extends Component>(
+    component: new () => T
+  ): Entity[] {
+    return Array.from(this.neighbors).filter((e): e is Entity =>
       e.has(component)
     );
   }

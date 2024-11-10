@@ -26,6 +26,12 @@ function stateToString(state: CharacterState): string {
       return "WALKING";
     case CharacterState.HARVESTING:
       return "HARVESTING";
+    case CharacterState.DEPOSITING:
+      return "DEPOSITING";
+    case CharacterState.LOST:
+      return "LOST";
+    default:
+      return "UNKNOWN";
   }
 }
 
@@ -89,13 +95,18 @@ class CharacterStateSystem extends System {
       const character = entity as Character;
       const characterComponent = character.get(CharacterComponent);
       const visionComponent = character.get(VisionComponent);
+      const inventoryComponent = character.get(InventoryComponent);
 
       // make sure our state is IDLE
       if (characterComponent.state !== CharacterState.IDLE) {
         continue;
       }
 
-      const characterPos = character.get(TransformComponent)?.pos;
+      // make sure we have an empty inventory
+      if (!inventoryComponent.hasCapacity()) {
+        continue;
+      }
+
       const isoMap = (game.currentScene as MainScene).isoMap;
 
       // check to see if we can see a harvestable resource

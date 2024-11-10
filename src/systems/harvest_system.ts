@@ -10,17 +10,19 @@ import {
   CharacterComponent,
   CharacterState,
   InventoryComponent,
+  NeighborsComponent,
   VisionComponent,
 } from "../components/character";
 import Character from "../actors/character";
 import { HarvestableResourceComponent } from "../components/harvestable";
 import Harvestable from "../actors/harvestable";
+import { closest_entity } from "../utility/utils";
 
 class HarvestSystem extends System {
   query: Query<
     | typeof CharacterComponent
     | typeof InventoryComponent
-    | typeof VisionComponent
+    | typeof NeighborsComponent
   >;
 
   public info_table: string | null = null;
@@ -30,7 +32,7 @@ class HarvestSystem extends System {
     this.query = world.query([
       CharacterComponent,
       InventoryComponent,
-      VisionComponent,
+      NeighborsComponent,
     ]);
   }
   // Lower numbers mean higher priority
@@ -43,7 +45,7 @@ class HarvestSystem extends System {
     for (let entity of this.query.entities) {
       const character = entity as Character;
       const characterComponent = character.get(CharacterComponent);
-      const visionComponent = character.get(VisionComponent);
+      const neighborsComponent = character.get(NeighborsComponent);
 
       // make sure our state is IDLE
       if (characterComponent.state !== CharacterState.IDLE) {
@@ -55,26 +57,16 @@ class HarvestSystem extends System {
         continue;
       }
 
-      const harvestables = visionComponent.getWithComponent(
+      const harvestables = neighborsComponent.getWithComponent(
         HarvestableResourceComponent
       );
 
-      // compute distance, for each harvestable
-      const distances = harvestables.map((harvestable) => {
-        const harvestableTransform = harvestable.get(TransformComponent);
-        const distance = character
-          .get(TransformComponent)
-          .pos.distance(harvestableTransform.pos);
-        return { distance, harvestable };
-      });
+      // check if we have any harvestables in the neighbors
+      if (harvestables.length === 0) {
+        continue;
+      }
 
-      // sort by distance
-      distances.sort((a, b) => a.distance - b.distance);
-
-      // if the closest harvestable is within 50 units, harvest it
-      const closestHarvestable = distances.find(
-        (d) => d.distance < 50
-      )?.harvestable;
+      const closestHarvestable = closest_entity(character, harvestables);
 
       // if we found a harvestable, set our state to HARVESTING
       if (closestHarvestable) {

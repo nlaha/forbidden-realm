@@ -16,14 +16,8 @@ class Game extends Engine {
       canvasElementId: "game",
       viewport: {
         width: 1280,
-        height: 600,
+        height: 500,
       },
-      // sets the resolution
-      resolution: {
-        width: 1280,
-        height: 600,
-      },
-      suppressHiDPIScaling: true,
       pixelArt: true,
       scenes: {
         mainScene: MainScene,

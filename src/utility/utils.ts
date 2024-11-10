@@ -7,6 +7,8 @@ import {
   Vector,
   vec,
   Actor,
+  Entity,
+  TransformComponent,
 } from "excalibur";
 import { game } from "../main";
 import { Grid } from "@evilkiwi/astar";
@@ -91,6 +93,13 @@ export function mark_tiles_as_solid(isoMap: IsometricMap) {
 
   // for each tile, check if it intersects with any collider
   for (let tile of tiles) {
+    // water is also -1
+    if (tile.tags.has("water")) {
+      (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
+      //tile.addGraphic(Tiles.Red.toSprite());
+      continue;
+    }
+
     for (let collider of colliders) {
       // get world position of tile
       const worldPos = tile.center;
@@ -99,12 +108,17 @@ export function mark_tiles_as_solid(isoMap: IsometricMap) {
       if (collider.collider.get()?.contains(worldPos)) {
         tile.solid = true;
         (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
+        //tile.addGraphic(Tiles.Red.toSprite());
       }
     }
   }
 }
 
-export function mark_tile_solid_single(isoMap: IsometricMap, actor: Actor) {
+export function mark_tile_solid_single(
+  isoMap: IsometricMap,
+  actor: Actor,
+  walkability: number
+) {
   // get all tiles
   const tiles = isoMap.tiles;
 
@@ -120,9 +134,10 @@ export function mark_tile_solid_single(isoMap: IsometricMap, actor: Actor) {
       }
       // check if the collider intersects with the tile
       if (actor.collider.get()?.contains(tile.pos)) {
-        tile.solid = true;
+        tile.solid = walkability === -1;
         // update navgrid
-        (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
+        (game.currentScene as MainScene).navgrid![tile.y][tile.x] = walkability;
+        //tile.addGraphic(Tiles.Red.toSprite());
       }
     }
   }
@@ -139,4 +154,32 @@ export function init_navgrid(isoMap: IsometricMap): number[][] {
     .map(() => new Array(isoMap.rows).fill(0));
 
   return matrix as number[][];
+}
+
+/**
+ * Finds the entity closest to a reference position
+ * @param reference_entity the reference entity
+ * @param entities the entities to search
+ * @returns
+ */
+export function closest_entity(reference_entity: Entity, entities: Entity[]) {
+  let closest_entity: Entity | null = null;
+  let closest_distance = Number.MAX_VALUE;
+
+  const reference_pos = reference_entity.get(TransformComponent)?.pos;
+
+  for (let entity of entities) {
+    const pos = entity.get(TransformComponent)?.pos;
+    if (!pos) {
+      continue;
+    }
+
+    const distance = pos.distance(reference_pos);
+    if (distance < closest_distance) {
+      closest_distance = distance;
+      closest_entity = entity;
+    }
+  }
+
+  return closest_entity;
 }

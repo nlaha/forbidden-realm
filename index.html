@@ -7,13 +7,16 @@
     <title>Crimson Game Jam - Fall 2024</title>
 
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
+
       body {
         margin: 0;
-        background-color: #191919;
+        background-color: #181818;
         color: #fff;
+        font-family: "Lora", serif;
       }
+
       #game {
-        max-width: 1280px;
         display: block;
         margin: 0 auto;
         background-color: #000;
@@ -32,17 +35,22 @@
 
       #palette {
         display: flex;
+        flex-direction: row;
         justify-content: center;
         gap: 0.5rem;
         background: #973737;
         box-shadow: 0 0 1rem 0.5rem #000;
         border-bottom-left-radius: 0.5rem;
         border-bottom-right-radius: 0.5rem;
+        min-width: 100px;
       }
 
       .palette-item {
+        display: flex;
+        flex-direction: column;
         border-radius: 0.5rem;
         cursor: pointer;
+        align-items: center;
       }
 
       .palette-item:hover {
@@ -68,13 +76,27 @@
       tr:nth-child(even) {
         background-color: #472727;
       }
+
+      .palette-label {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        margin: 0.5rem;
+      }
+
+      .game-container {
+        display: flex;
+        flex-direction: column;
+      }
     </style>
   </head>
 
   <body>
     <main>
-      <canvas id="game"></canvas>
-      <div id="palette"></div>
+      <div class="game-container">
+        <canvas id="game"></canvas>
+        <div id="palette"></div>
+      </div>
       <div id="info-panel" style="margin: 1rem">
         <!-- table to display info about each character, first name, state, and inventory -->
         <table class="info-table">
@@ -88,6 +110,13 @@
           </thead>
           <tbody></tbody>
         </table>
+      </div>
+      <div>
+        <!-- game stats display -->
+        <div id="game-stats" style="margin: 1rem">
+          <h2>Game Stats</h2>
+          <p>Time: <span id="time">0</span></p>
+          <p>Gold: <span id="gold">0</span></p>
       </div>
     </main>
     <script type="module" src="./src/main.ts"></script>

@@ -13,6 +13,7 @@ import CharacterStateSystem from "./systems/character_state_system";
 import VisionSystem from "./systems/vision_system";
 import HarvestSystem from "./systems/harvest_system";
 import DepotSystem from "./systems/depo_system";
+import NeighborSystem from "./systems/neighbor_system";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -24,6 +25,19 @@ class MainScene extends Scene {
   navgrid: Grid | null = null;
 
   harvestables: Harvestable[] = [];
+
+  gold: number = 0;
+  gameTime: number = 0;
+
+  public update(engine: Engine, delta: number): void {
+    super.update(engine, delta);
+    // increment game time on document
+    const timeElement = document.getElementById("time");
+    timeElement!.innerHTML = this.gameTime.toFixed(2);
+
+    // increment game time
+    this.gameTime += delta / 1000;
+  }
 
   /**
    * Start-up logic, called once
@@ -45,42 +59,42 @@ class MainScene extends Scene {
 
     this.noiseGen = createNoise2D();
 
-    // // generate rivers
-    // // pick a random start point on the edge of the map
-    // const start = vec(0, Math.floor(Math.random() * this.isoMap.rows));
-    // // make sure the start point is not too close to the edge
-    // if (start.y < 5 || start.y > this.isoMap.rows - 5) {
-    //   start.y = 5;
-    // }
+    // generate rivers
+    // pick a random start point on the edge of the map
+    const start = vec(0, Math.floor(Math.random() * this.isoMap.rows));
+    // make sure the start point is not too close to the edge
+    if (start.y < 5 || start.y > this.isoMap.rows - 5) {
+      start.y = 5;
+    }
 
-    // for (let i = 0; i < 200; i++) {
-    //   const tile = this.isoMap.getTile(start.x, start.y);
-    //   tile?.addTag("water");
+    for (let i = 0; i < 200; i++) {
+      const tile = this.isoMap.getTile(start.x, start.y);
+      tile?.addTag("water");
 
-    //   // add a bunch of sand tiles around the water
-    //   for (let x = -1; x < 2; x++) {
-    //     for (let y = -1; y < 2; y++) {
-    //       const sandTile = this.isoMap.getTile(start.x + x, start.y + y);
-    //       if (sandTile && !sandTile.tags.has("water")) {
-    //         sandTile.addGraphic(Tiles.Sand.toSprite());
-    //         sandTile.addTag("sand");
-    //       }
-    //     }
-    //   }
+      // add a bunch of sand tiles around the water
+      for (let x = -1; x < 2; x++) {
+        for (let y = -1; y < 2; y++) {
+          const sandTile = this.isoMap.getTile(start.x + x, start.y + y);
+          if (sandTile && !sandTile.tags.has("water")) {
+            sandTile.addGraphic(Tiles.Sand.toSprite());
+            sandTile.addTag("sand");
+          }
+        }
+      }
 
-    //   // randomly change direction
-    //   if (i % 2 === 0) {
-    //     const dir = Math.random();
-    //     if (dir < 0.5) start.y--;
-    //     else if (dir > 0.5) start.y++;
-    //   } else {
-    //     start.x++;
-    //   }
+      // randomly change direction
+      if (i % 2 === 0) {
+        const dir = Math.random();
+        if (dir < 0.5) start.y--;
+        else if (dir > 0.5) start.y++;
+      } else {
+        start.x++;
+      }
 
-    //   if (tile) {
-    //     tile.addGraphic(Tiles.Water.toSprite());
-    //   }
-    // }
+      if (tile) {
+        tile.addGraphic(Tiles.Water.toSprite());
+      }
+    }
 
     // generate base terrain
     for (let tile of this.isoMap.tiles) {
@@ -120,7 +134,7 @@ class MainScene extends Scene {
     mark_tiles_as_solid(this.isoMap);
 
     // spawn humans in random locations
-    spawner(1, 5, this.isoMap, "grass").forEach((pos) => {
+    spawner(1, 2, this.isoMap, "grass").forEach((pos) => {
       const human = new Character(this.isoMap, { pos: pos });
       this.add(human);
     });
@@ -133,26 +147,43 @@ class MainScene extends Scene {
 
     // iterate through all buildings and add them as images to the palette
     for (const building of Object.values(Buildings)) {
+      const div = document.createElement("div");
+      div.className = "palette-item";
+
       const img = document.createElement("img");
-      img.src = building.path;
+      div.appendChild(img);
+
+      // create label for image
+      const label = document.createElement("label");
+      label.innerHTML = `${building.name} - ${building.cost} gold`;
+      label.className = "palette-label";
+      div.appendChild(label);
+
+      img.src = building.img.path;
       img.width = 64;
       img.height = 64;
       img.style.cursor = "pointer";
-      img.classList.add("palette-item");
 
-      img.onclick = () => {
+      div.onclick = () => {
         const pos = engine.input.pointers.primary.lastWorldPos;
-        const buildingObj = new Building(this.isoMap, pos, building);
+        // create object depending on what buliding.type is
+        const buildingObj = new building.type(
+          this.isoMap,
+          pos,
+          building.img,
+          building.walkability
+        );
         this.add(buildingObj);
       };
 
-      palette?.appendChild(img);
+      palette?.appendChild(div);
     }
 
     this.world.add(CharacterStateSystem);
     this.world.add(VisionSystem);
     this.world.add(HarvestSystem);
     this.world.add(DepotSystem);
+    this.world.add(NeighborSystem);
   }
 }
 
