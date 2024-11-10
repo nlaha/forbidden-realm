@@ -92,7 +92,7 @@ class Character extends Actor {
 
     // every second the character isn't idle, they lose 1 food
     if (this.get(CharacterComponent).state !== CharacterState.IDLE) {
-      this.get(LivingComponent).starve((delta / 1000) * 1);
+      this.get(LivingComponent).starve((delta / 2000) * 1);
     }
 
     // if the character is hungry, they move slower
@@ -109,7 +109,6 @@ class Character extends Actor {
 
     // if the character is dead, remove them from the scene
     if (this.get(LivingComponent).isDead()) {
-      this.get(CharacterComponent).state = CharacterState.DEAD;
       // try to determine the cause of death
       let cause = "unknown";
       const food = this.get(LivingComponent).food;
@@ -118,13 +117,18 @@ class Character extends Actor {
         cause = "starvation";
       }
 
-      // add their death to the scene
-      (this.scene as MainScene).deaths.push({
-        name: this.get(CharacterComponent).first_name,
-        cause: `Died by ${cause}`,
-      });
-      this.kill();
+      this.die(cause);
     }
+  }
+
+  public die(cause: string) {
+    // add their death to the scene
+    (this.scene as MainScene).deaths.push({
+      name: this.get(CharacterComponent).first_name,
+      cause: `Died by ${cause}`,
+    });
+    this.get(CharacterComponent).state = CharacterState.DEAD;
+    this.kill();
   }
 
   public walkTo(target: Vector): void {

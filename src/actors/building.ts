@@ -12,7 +12,11 @@ import { game } from "../main";
 
 import buildingFrag from "../shaders/building.frag";
 import ProgressIndicator from "./progress_bar";
-import { compute_iso_collider, mark_tile_solid_single } from "../utility/utils";
+import {
+  compute_iso_collider,
+  mark_tile_solid_single,
+  mark_tiles_as_solid,
+} from "../utility/utils";
 import { InventoryComponent } from "../components/inventory";
 import { BuildingComponent } from "../components/building";
 import { Storage } from "../storage";
@@ -103,6 +107,11 @@ class Building extends Actor {
         this.onConstructionDone();
       }
     }
+  }
+
+  public die() {
+    mark_tiles_as_solid(this.isoMap);
+    this.kill();
   }
 
   public place() {

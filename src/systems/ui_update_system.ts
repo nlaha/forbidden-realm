@@ -3,6 +3,7 @@ import Character from "../actors/character";
 import {
   CharacterComponent,
   CharacterRole,
+  CharacterState,
   LivingComponent,
   VisionComponent,
 } from "../components/character";
@@ -116,6 +117,14 @@ class UIUpdateSystem extends System {
       scene.status_table.setData(newData);
     } else {
       scene.status_table.updateData(newData);
+
+      // if any characters are dead, remove them from the table
+      const deadCharacters = newData.filter(
+        (data) => data.state === CharacterState.DEAD
+      );
+      deadCharacters.forEach((dead) => {
+        scene.status_table.deleteRow(dead.id);
+      });
     }
   }
 }

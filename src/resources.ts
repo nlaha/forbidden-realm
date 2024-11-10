@@ -15,6 +15,9 @@ import bridge from "./images/buildings/bridge.png";
 import farm_healthy from "./images/buildings/farm_healthy.png";
 import farm_dying from "./images/buildings/farm_dying.png";
 
+// effects
+import lightning from "./images/effects/lightning.png";
+
 // import foliage
 import tree1 from "./images/foliage/tree1.png";
 
@@ -103,6 +106,10 @@ export const Characters = {
   Human: new ImageSource(human),
 } as const;
 
+export const Effects = {
+  Lightning: new ImageSource(lightning),
+};
+
 const spriteFontSheet = SpriteSheet.fromImageSource({
   image: Fonts.main,
   grid: {
@@ -130,6 +137,7 @@ for (const res of [
   Object.values(Fonts),
   Object.values(Characters),
   Object.values(Harvestables).map((h) => h.img),
+  Object.values(Effects),
 ].flat()) {
   loader.addResource(res);
 }
