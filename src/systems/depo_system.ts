@@ -13,6 +13,7 @@ import {
 import { InventoryComponent } from "../components/inventory";
 import Character from "../actors/character";
 import { BuildingComponent } from "../components/building";
+import { closest_entity } from "../utility/utils";
 
 class DepotSystem extends System {
   query: Query<
@@ -96,17 +97,24 @@ class DepotSystem extends System {
           console.log("Deposited", item);
           characterComponent.state = CharacterState.IDLE;
         });
+      } else {
+        // if there are no buildings with capacity, we can't deposit resources
+        if (buildingsWithCapacity.length === 0) {
+          continue;
+        }
+
+        // move to the closest building with capacity
+        const closestBuilding = closest_entity(
+          character,
+          buildingsWithCapacity
+        );
+
+        if (!closestBuilding) {
+          continue;
+        }
+
+        character.walkTo(closestBuilding.get(TransformComponent).pos);
       }
-
-      // if there are no buildings with capacity, we can't deposit resources
-      if (buildingsWithCapacity.length === 0) {
-        continue;
-      }
-
-      // move to the first building with capacity
-      const building = buildingsWithCapacity[0];
-
-      character.walkTo(building.get(TransformComponent).pos);
     }
   }
 }

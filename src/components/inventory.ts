@@ -18,14 +18,20 @@ export class InventoryComponent extends Component {
   }
 
   public getNumItems(): number {
-    return Array.from(this.items.values()).reduce((a, b) => a + b, 0);
+    return Array.from(this.items.values()).reduce((a, b) => a + b, 0) ?? 0;
   }
 
-  public removeItem(item: string | undefined = undefined): string {
+  public removeItem(item: string | undefined = undefined): string | null {
     // if no item is specified, remove any item
     if (!item) {
       item = Array.from(this.items.keys())[0];
     }
+
+    // if there is no item to remove, return
+    if (this.items.has(item) === false) {
+      return null;
+    }
+
     // remove one of this item from the inventory
     this.items.set(item, this.items.get(item)! - 1);
     // if the item count is 0, remove it from the inventory

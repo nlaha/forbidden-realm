@@ -90,9 +90,9 @@ class Character extends Actor {
       }
     }
 
-    // every second the character isn't idle, they lose 5 food
+    // every second the character isn't idle, they lose 1 food
     if (this.get(CharacterComponent).state !== CharacterState.IDLE) {
-      this.get(LivingComponent).starve((delta / 1000) * 5);
+      this.get(LivingComponent).starve((delta / 1000) * 1);
     }
 
     // if the character is hungry, they move slower
@@ -128,6 +128,11 @@ class Character extends Actor {
   }
 
   public walkTo(target: Vector): void {
+    this.get(CharacterComponent).state = CharacterState.WALKING;
+
+    // if we currently have actions queued up, cancel them.
+    this.actions.clearActions();
+
     // get start tile
     const start = this.isoMap.worldToTile(this.pos);
     const end = this.isoMap.worldToTile(target);
@@ -138,6 +143,7 @@ class Character extends Actor {
     const endTile = this.isoMap.getTile(end.x, end.y);
     if (!endTile) {
       console.warn("No tile found at target position");
+      this.get(CharacterComponent).state = CharacterState.IDLE;
       return;
     }
 
@@ -174,6 +180,8 @@ class Character extends Actor {
 
     if (scene.navgrid === null) {
       console.warn("No navgrid found in scene");
+
+      this.get(CharacterComponent).state = CharacterState.IDLE;
       return;
     }
 
@@ -192,6 +200,7 @@ class Character extends Actor {
         } going from ${start.x}, ${start.y} to ${end.x}, ${end.y}`
       );
 
+      this.get(CharacterComponent).state = CharacterState.IDLE;
       return;
     }
 
@@ -207,8 +216,6 @@ class Character extends Actor {
     this.actions.callMethod(() => {
       this.get(CharacterComponent).state = CharacterState.IDLE;
     });
-
-    this.get(CharacterComponent).state = CharacterState.WALKING;
   }
 
   public onInitialize() {}

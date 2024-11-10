@@ -15,7 +15,6 @@ export abstract class Storage {
   }
 
   static addResource(resource: string, amount: number) {
-    console.log(`Adding ${amount} ${resource} to storage`);
     Storage.storage.set(
       resource,
       (Storage.storage.get(resource) ?? 0) + amount
@@ -23,11 +22,15 @@ export abstract class Storage {
   }
 
   static removeResource(resource: string, amount: number) {
-    console.log(`Removing ${amount} ${resource} from storage`);
     Storage.storage.set(
       resource,
       (Storage.storage.get(resource) ?? 0) - amount
     );
+
+    // if it's less than 0, set it to 0
+    if (Storage.storage.get(resource)! < 0) {
+      Storage.storage.set(resource, 0);
+    }
   }
 
   // clear all inventories in the world and reset storage
@@ -55,7 +58,6 @@ export abstract class Storage {
           (inventory.items.get(resourceType) ?? 0) > 0 && // we have this resource
           tempCost.get(resourceType)! > 0 // we still need to pay for this resource
         ) {
-          console.log(`Paying ${resourceType} from inventory ${entity.id}`);
           inventory.removeItem(resourceType);
           tempCost.set(resourceType, tempCost.get(resourceType)! - 1);
         }

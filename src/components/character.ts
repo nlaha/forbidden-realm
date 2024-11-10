@@ -72,6 +72,7 @@ export enum CharacterState {
   HARVESTING = "harvesting",
   DEPOSITING = "depositing",
   DEAD = "dead",
+  EATING = "eating",
 }
 
 export enum CharacterRole {

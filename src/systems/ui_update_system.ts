@@ -92,6 +92,7 @@ class UIUpdateSystem extends System {
       const livingComponent = character.get(LivingComponent);
 
       const invString = Array.from(inventoryComponent.items.keys())
+        .filter((key) => inventoryComponent.items.get(key)! > 0)
         .map((key) => key.repeat(inventoryComponent.items.get(key) ?? 0))
         .join("");
 

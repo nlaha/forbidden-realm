@@ -26,6 +26,7 @@ import DisasterSystem from "./systems/disaster_system";
 import { CharacterComponent } from "./components/character";
 
 import { Storage } from "./storage";
+import EatSystem from "./systems/eat_system";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -291,6 +292,7 @@ class MainScene extends Scene {
     this.world.add(NeighborSystem);
     this.world.add(UIUpdateSystem);
     this.world.add(DisasterSystem);
+    this.world.add(EatSystem);
   }
 }
 
