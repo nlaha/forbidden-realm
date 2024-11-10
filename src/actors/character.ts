@@ -4,6 +4,7 @@ import {
   Engine,
   IsometricEntityComponent,
   IsometricMap,
+  SpriteSheet,
   vec,
   Vector,
 } from "excalibur";
@@ -48,7 +49,17 @@ class Character extends Actor {
     this.addComponent(new InventoryComponent());
     this.addComponent(new VisionComponent());
 
-    this.graphics.use(Characters.Worker.toSprite());
+    const spriteSheet = SpriteSheet.fromImageSource({
+      image: Characters.Human,
+      grid: {
+        rows: 4,
+        columns: 1,
+        spriteWidth: 32,
+        spriteHeight: 48,
+      },
+    });
+
+    this.graphics.use(spriteSheet.getSprite(0, 0));
 
     // assign custom material for outlines
     this.graphics.material = game.graphicsContext.createMaterial({

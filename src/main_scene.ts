@@ -118,10 +118,10 @@ class MainScene extends Scene {
     // initialize pathfinding
     mark_tiles_as_solid(this.isoMap);
 
-    // spawn workers in random locations
+    // spawn humans in random locations
     spawner(1, 5, this.isoMap, "grass").forEach((pos) => {
-      const worker = new Character(this.isoMap, { pos: pos });
-      this.add(worker);
+      const human = new Character(this.isoMap, { pos: pos });
+      this.add(human);
     });
 
     // add the map to the scene
