@@ -89,7 +89,9 @@ class DisasterSystem extends System {
     switch (random.d4()) {
       // destroy a random building
       case 1: {
-        console.log("The creations of man shall fall by my hand!");
+        DialogueSystem.showText(
+					"The creations of man shall fall by my hand!"
+				);
         const buildings = this.buildingQuery.entities;
         if (buildings.length != 0) {
           const building = buildings[
@@ -118,7 +120,9 @@ class DisasterSystem extends System {
 
       // kill a random human
       case 2: {
-        console.log("My wrath smites your workers!");
+        DialogueSystem.showText(
+					"My wrath smites your workers!"
+				);
         const humans = this.query.entities;
         if (humans.length != 0) {
           const char = humans[
@@ -140,7 +144,9 @@ class DisasterSystem extends System {
 
       // make humans take longer to gather things for 1 minute
       case 3: {
-        console.log("Your people grow tired from the slothful plague.");
+        DialogueSystem.showText(
+          "Your people grow tired from the slothful plague."
+        );
         HarvestSystem.harvestRate *= 2;
 
         const timer = new Timer({
