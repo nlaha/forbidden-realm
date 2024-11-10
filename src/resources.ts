@@ -48,28 +48,31 @@ export const Buildings = {
     img: new ImageSource(house1),
     type: Depot,
     walkability: -1,
-    cost: 100,
+    cost: new Map([
+      ["🪵", 2],
+      ["🪨", 2],
+    ]),
   },
   Blacksmith: {
     name: "Blacksmith",
     img: new ImageSource(blacksmith),
     type: Building,
     walkability: -1,
-    cost: 500,
+    cost: new Map([["🪨", 5]]),
   },
   Bridge: {
     name: "Bridge",
     img: new ImageSource(bridge),
     type: Building,
     walkability: 0,
-    cost: 800,
+    cost: new Map([]),
   },
   Farm: {
     name: "Farm",
     img: new ImageSource(farm_healthy),
     type: Farm,
     walkability: 0,
-    cost: 400,
+    cost: new Map([["🪵", 5]]),
   },
 } as const;
 

@@ -8,9 +8,9 @@ import {
 import {
   CharacterComponent,
   CharacterState,
-  InventoryComponent,
   NeighborsComponent,
 } from "../components/character";
+import { InventoryComponent } from "../components/inventory";
 import Character from "../actors/character";
 import { BuildingComponent } from "../components/building";
 
@@ -62,7 +62,7 @@ class DepotSystem extends System {
       }
 
       // check if character has items to deposit
-      if (inventoryComponent.items.length === 0) {
+      if (inventoryComponent.getNumItems() === 0) {
         continue;
       }
 
@@ -88,7 +88,7 @@ class DepotSystem extends System {
 
         // deposit resources
         character.actions.delay(1000).callMethod(() => {
-          const item = inventory.items.pop();
+          const item = inventory.removeItem();
           if (!item) {
             return;
           }

@@ -10,10 +10,10 @@ import {
   CharacterComponent,
   CharacterRole,
   CharacterState,
-  InventoryComponent,
   NeighborsComponent,
   VisionComponent,
 } from "../components/character";
+import { InventoryComponent } from "../components/inventory";
 import Character from "../actors/character";
 import { HarvestableResourceComponent } from "../components/harvestable";
 import Harvestable from "../actors/harvestable";

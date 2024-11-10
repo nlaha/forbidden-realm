@@ -1,5 +1,5 @@
 import { Color, Font, ImageSource, Label, vec } from "excalibur";
-import { InventoryComponent } from "../../components/character";
+import { InventoryComponent } from "../../components/inventory";
 import Building from "../building";
 
 class Depot extends Building {
@@ -9,9 +9,10 @@ class Depot extends Building {
     isoMap: ex.IsometricMap,
     pos: ex.Vector,
     img: ImageSource,
-    walkability: number
+    walkability: number,
+    cost: Map<string, number>
   ) {
-    super(isoMap, pos, img, walkability);
+    super(isoMap, pos, img, walkability, cost);
   }
 
   public update(engine: ex.Engine, delta: number): void {
@@ -19,7 +20,7 @@ class Depot extends Building {
     if (this.label) {
       // update label
       const inventory = this.get(InventoryComponent);
-      this.label.text = `${inventory.items.length}/${inventory.capacity}`;
+      this.label.text = `${inventory.getNumItems()}/${inventory.capacity}`;
     }
   }
 

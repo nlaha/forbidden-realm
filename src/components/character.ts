@@ -5,8 +5,33 @@ export class LivingComponent extends Component {
   public health: number = 100;
   public maxHealth: number = 100;
 
+  public food: number = 100;
+
   public isDead(): boolean {
     return this.health <= 0;
+  }
+
+  public isHungry(): boolean {
+    return this.food <= 50;
+  }
+
+  public isStarving(): boolean {
+    return this.food <= 0;
+  }
+
+  public eat(amount: number) {
+    if (this.food + amount > 100) {
+      this.food = 100;
+    } else {
+      this.food += amount;
+    }
+  }
+
+  public starve(amount: number) {
+    this.food -= amount;
+    if (this.food < 0) {
+      this.food = 0;
+    }
   }
 
   public takeDamage(damage: number) {
@@ -41,35 +66,12 @@ export class BrainComponent extends Component {
   }
 }
 
-export class InventoryComponent extends Component {
-  public items: string[] = [];
-  public capacity: number = 2;
-
-  public onAdd() {}
-
-  public addItem(item: string) {
-    if (this.items.length < this.capacity) {
-      this.items.push(item);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public removeItem(item: string) {
-    this.items = this.items.filter((i) => i !== item);
-  }
-
-  public hasCapacity(): boolean {
-    return this.items.length < this.capacity;
-  }
-}
-
 export enum CharacterState {
   WALKING = "walking",
   IDLE = "idle",
   HARVESTING = "harvesting",
   DEPOSITING = "depositing",
+  DEAD = "dead",
 }
 
 export enum CharacterRole {

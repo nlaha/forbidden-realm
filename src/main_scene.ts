@@ -25,6 +25,8 @@ import UIUpdateSystem from "./systems/ui_update_system";
 import DisasterSystem from "./systems/disaster_system";
 import { CharacterComponent } from "./components/character";
 
+import { Storage } from "./storage";
+
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
 
@@ -38,8 +40,11 @@ class MainScene extends Scene {
 
   status_table: any | null = null;
 
-  gold: number = 0;
   gameTime: number = 0;
+
+  buildingDefinitions: any = [];
+
+  deaths: any[] = [];
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
@@ -78,6 +83,30 @@ class MainScene extends Scene {
         { title: "ID", field: "eid", width: 50 },
         { title: "Name", field: "name", width: 150 },
         { title: "State", field: "state" },
+        {
+          title: "Health",
+          field: "health",
+          formatter: "progress",
+          formatterParams: {
+            color: "#FF0000",
+            legend: function (value) {
+              // round to 2 decimal places
+              return parseFloat(value).toFixed(2) + "/100";
+            },
+          },
+        },
+        {
+          title: "Food",
+          field: "food",
+          formatter: "progress",
+          formatterParams: {
+            color: "#f4FF00",
+            legend: function (value) {
+              // round to 2 decimal places
+              return parseFloat(value).toFixed(2) + "/100";
+            },
+          },
+        },
         { title: "Visible Objects", field: "vision" },
         { title: "Inventory", field: "inventory" },
         {
@@ -195,7 +224,7 @@ class MainScene extends Scene {
     mark_tiles_as_solid(this.isoMap);
 
     // spawn humans in random locations
-    spawner(1, 2, this.isoMap, "grass").forEach((pos) => {
+    spawner(1, 3, this.isoMap, "grass").forEach((pos) => {
       const human = new Character(this.isoMap, { pos: pos });
       this.add(human);
     });
@@ -216,7 +245,13 @@ class MainScene extends Scene {
 
       // create label for image
       const label = document.createElement("label");
-      label.innerHTML = `${building.name} - ${building.cost} gold`;
+
+      // repeat keys the number of times the value is
+      const costString = Array.from(building.cost.keys())
+        .map((key) => key.repeat(building.cost.get(key)!))
+        .join("");
+
+      label.innerHTML = `${building.name} - ${costString}`;
       label.className = "palette-label";
       div.appendChild(label);
 
@@ -232,13 +267,22 @@ class MainScene extends Scene {
           this.isoMap,
           pos,
           building.img,
-          building.walkability
+          building.walkability,
+          building.cost
         );
         this.add(buildingObj);
       };
 
+      this.buildingDefinitions.push({
+        definition: building,
+        element: div,
+      });
       palette?.appendChild(div);
     }
+
+    document.getElementById("clear-storage")!.onclick = () => {
+      Storage.clearInventories(this.world);
+    };
 
     this.world.add(IdleSystem);
     this.world.add(VisionSystem);

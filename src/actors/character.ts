@@ -14,11 +14,11 @@ import {
   CharacterComponent,
   CharacterRole,
   CharacterState,
-  InventoryComponent,
   LivingComponent,
   NeighborsComponent,
   VisionComponent,
 } from "../components/character";
+import { InventoryComponent } from "../components/inventory";
 import { game } from "../main";
 
 import characterFrag from "../shaders/character.frag";
@@ -48,6 +48,7 @@ let selectedCharacter: Character | null = null;
 
 class Character extends Actor {
   isoMap: IsometricMap;
+  moveSpeedMs: number = 100;
 
   constructor(isoMap: IsometricMap, config: ActorArgs) {
     super(config);
@@ -87,6 +88,42 @@ class Character extends Actor {
       } else {
         this.graphics.use(spriteSheet.getSprite(2, 0));
       }
+    }
+
+    // every second the character isn't idle, they lose 5 food
+    if (this.get(CharacterComponent).state !== CharacterState.IDLE) {
+      this.get(LivingComponent).starve((delta / 1000) * 5);
+    }
+
+    // if the character is hungry, they move slower
+    if (this.get(LivingComponent).isHungry()) {
+      this.moveSpeedMs = 500;
+    } else {
+      this.moveSpeedMs = 100;
+    }
+
+    // every second the character is starving, they lose 5 health
+    if (this.get(LivingComponent).isStarving()) {
+      this.get(LivingComponent).takeDamage((delta / 1000) * 5);
+    }
+
+    // if the character is dead, remove them from the scene
+    if (this.get(LivingComponent).isDead()) {
+      this.get(CharacterComponent).state = CharacterState.DEAD;
+      // try to determine the cause of death
+      let cause = "unknown";
+      const food = this.get(LivingComponent).food;
+
+      if (food <= 0) {
+        cause = "starvation";
+      }
+
+      // add their death to the scene
+      (this.scene as MainScene).deaths.push({
+        name: this.get(CharacterComponent).first_name,
+        cause: `Died by ${cause}`,
+      });
+      this.kill();
     }
   }
 
@@ -163,7 +200,7 @@ class Character extends Actor {
       const next_tile_pos = path[i];
       this.actions.easeTo(
         this.isoMap.tileToWorld(vec(next_tile_pos[0], next_tile_pos[1])),
-        100
+        this.moveSpeedMs
       );
     }
 

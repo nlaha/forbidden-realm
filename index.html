@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crimson Game Jam - Fall 2024</title>
     <link
-      href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css"
+      href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator_midnight.min.css"
       rel="stylesheet"
     />
 
@@ -27,6 +27,8 @@
         background-color: #181818;
         color: #fff;
         font-family: "Alagard", sans-serif;
+
+        overflow-y: scroll;
       }
 
       #game {
@@ -76,7 +78,7 @@
       }
 
       .palette-item:hover {
-        background: #d9b43c;
+        background: #92740f;
       }
 
       .info-panel {
@@ -125,6 +127,11 @@
         opacity: 0;
         transition: opacity 0.5s;
       }
+
+      .unavailable {
+        pointer-events: none;
+        opacity: 0.5;
+      }
     </style>
   </head>
 
@@ -153,9 +160,21 @@
           <div id="game-stats">
             <h2>Game Stats</h2>
             <p>Time: <span id="time">0</span></p>
-            <p>Gold: <span id="gold">0</span></p>
+          </div>
+          <div>
+            <h2>Storage</h2>
+            <div id="storage"></div>
+          </div>
+          <div>
+            <h2>Obituary</h2>
+
+            <table id="obituary">
+              No deaths yet!
+            </table>
           </div>
         </div>
+        <!-- clear storage button -->
+        <button id="clear-storage">Clear Storage</button>
       </div>
     </main>
     <script type="module" src="./src/main.ts"></script>

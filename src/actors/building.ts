@@ -13,8 +13,9 @@ import { game } from "../main";
 import buildingFrag from "../shaders/building.frag";
 import ProgressIndicator from "./progress_bar";
 import { compute_iso_collider, mark_tile_solid_single } from "../utility/utils";
-import { InventoryComponent } from "../components/character";
+import { InventoryComponent } from "../components/inventory";
 import { BuildingComponent } from "../components/building";
+import { Storage } from "../storage";
 
 /**
  * Building actor
@@ -25,12 +26,14 @@ class Building extends Actor {
   construction_progress: number = 0;
   placed: boolean = false;
   walkability: number = -1;
+  cost: Map<string, number> = new Map();
 
   constructor(
     isoMap: ex.IsometricMap,
     pos: ex.Vector,
     img: ImageSource,
-    walkability: number
+    walkability: number,
+    cost: Map<string, number>
   ) {
     super({
       x: pos.x,
@@ -38,6 +41,7 @@ class Building extends Actor {
     });
 
     this.isoMap = isoMap;
+    this.cost = cost;
 
     this.addComponent(new IsometricEntityComponent(this.isoMap));
 
@@ -102,6 +106,14 @@ class Building extends Actor {
   }
 
   public place() {
+    // check storage to see if we have enough resources
+    if (Storage.canAfford(this.cost)) {
+      Storage.pay(this.cost, this.scene!.world);
+    } else {
+      console.log("Not enough resources");
+      return;
+    }
+
     // remove event subscriptions
     this.off("pointermove");
     this.off("pointerup");
