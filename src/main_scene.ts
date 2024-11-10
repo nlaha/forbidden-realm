@@ -1,8 +1,11 @@
 import {
   Actor,
+  Color,
   Engine,
   EntityManager,
+  Font,
   IsometricMap,
+  Label,
   Scene,
   vec,
 } from "excalibur";
@@ -37,6 +40,7 @@ class MainScene extends Scene {
 
   gold: number = 0;
   gameTime: number = 0;
+
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
     // increment game time on document
@@ -60,6 +64,8 @@ class MainScene extends Scene {
   public onInitialize(engine: Engine) {
     // first, add camera controller
     this.add(new CameraController());
+
+    document.getElementById("dialogue")!.innerText = "Welcome to the game!";
 
     // initialize status table
     this.status_table = new Tabulator("#status-table", {

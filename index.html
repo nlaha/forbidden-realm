@@ -111,6 +111,14 @@
         flex-direction: row;
         gap: 1rem;
       }
+
+      .dialogue-box {
+        position: absolute;
+        margin: 25px;
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+      }
     </style>
   </head>
 
@@ -118,6 +126,10 @@
     <main>
       <div class="game-container">
         <canvas id="game"></canvas>
+        <div class="dialogue-box">
+          <img src="./profile.png" alt="character profile" />
+          <p id="dialogue">Hello World!</p>
+        </div>
         <div id="palette"></div>
       </div>
       <div style="margin: 1rem">
