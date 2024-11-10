@@ -98,7 +98,7 @@ export const Buildings = {
     type: Building,
     walkability: -1,
     description: "Speeds up gathering",
-    cost: new Map([["🪨", 5]]),
+    cost: new Map([["🪨", 4]]),
   },
   Bridge: {
     name: "Bridge",
@@ -114,7 +114,7 @@ export const Buildings = {
     type: Farm,
     walkability: 0,
     description: "Food source for farmers",
-    cost: new Map([["🪵", 5]]),
+    cost: new Map([["🪵", 4]]),
   },
   Church: {
     name: "Church",
@@ -123,8 +123,8 @@ export const Buildings = {
     walkability: -1,
     description: "Recruit new followers",
     cost: new Map([
-      ["🪵", 8],
-      ["🪨", 8],
+      ["🪵", 6],
+      ["🪨", 6],
     ]),
   },
 } as const;

@@ -13,7 +13,7 @@ class DialogueSystem extends System {
   constructor(world: World) {
     super();
     DialogueSystem.world = world;
-    DialogueSystem.showText("Welcome to my realm... Can your devout followers hope to survive here? I'll make sure they cannot.")
+    DialogueSystem.showText("Welcome to my realm... Can your followers hope to survive here? I'll make sure they cannot.")
   }
 
   update(delta: Number) {}
