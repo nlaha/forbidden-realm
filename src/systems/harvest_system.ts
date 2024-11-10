@@ -29,6 +29,8 @@ class HarvestSystem extends System {
 
   public info_table: string | null = null;
 
+  public static harvestRate = 1;
+
   constructor(world: World) {
     super();
     this.query = world.query([
@@ -116,8 +118,8 @@ class HarvestSystem extends System {
       if (closestHarvestable) {
         characterComponent.state = CharacterState.HARVESTING;
 
-        // after 2 seconds, harvest the resource
-        character.actions.delay(2000).callMethod(() => {
+        // after the delay, harvest the resource
+        character.actions.delay(5000 * HarvestSystem.harvestRate).callMethod(() => {
           const inventory = character.get(InventoryComponent);
           const harvestable = closestHarvestable as Harvestable;
           const harvestableComponent = harvestable.get(
