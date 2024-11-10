@@ -53,15 +53,8 @@ class MainScene extends Scene {
     const timeElement = document.getElementById("time");
     timeElement!.innerHTML = this.gameTime.toFixed(2);
 
-    const prev_time = this.gameTime;
-
     // increment game time
     this.gameTime += delta / 1000;
-
-    // start a disaster every 60 seconds
-    if (prev_time % 60 > this.gameTime % 60) {
-      DisasterSystem.startDisaster();
-    }
   }
 
   /**
