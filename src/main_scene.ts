@@ -15,6 +15,7 @@ import HarvestSystem from "./systems/harvest_system";
 import DepotSystem from "./systems/depo_system";
 import NeighborSystem from "./systems/neighbor_system";
 import UIUpdateSystem from "./systems/ui_update_system";
+import DisasterSystem from "./systems/disaster_system";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -36,8 +37,15 @@ class MainScene extends Scene {
     const timeElement = document.getElementById("time");
     timeElement!.innerHTML = this.gameTime.toFixed(2);
 
+    const prev_time = this.gameTime;
+
     // increment game time
     this.gameTime += delta / 1000;
+
+    // start a disaster every 60 seconds
+    if (prev_time % 60 > this.gameTime % 60) {
+      DisasterSystem.startDisaster();
+    }
   }
 
   /**
@@ -188,6 +196,7 @@ class MainScene extends Scene {
     this.world.add(DepotSystem);
     this.world.add(NeighborSystem);
     this.world.add(UIUpdateSystem);
+    this.world.add(DisasterSystem);
   }
 }
 
