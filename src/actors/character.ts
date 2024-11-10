@@ -47,7 +47,6 @@ let selectedCharacter: Character | null = null;
 
 class Character extends Actor {
   isoMap: IsometricMap;
-  spriteSheet: SpriteSheet;
 
   constructor(isoMap: IsometricMap, config: ActorArgs) {
     super(config);
@@ -61,7 +60,7 @@ class Character extends Actor {
     this.addComponent(new InventoryComponent());
     this.addComponent(new VisionComponent());
 
-    this.graphics.use(this.spriteSheet.getSprite(0, 0));
+    this.graphics.use(spriteSheet.getSprite(0, 0));
 
     // add character name to the graphics
     const nameTag = new NameTag(
@@ -87,9 +86,6 @@ class Character extends Actor {
         this.graphics.use(spriteSheet.getSprite(2, 0));
       }
     }
-
-    // we recover energy over time
-    this.get(LivingComponent).energy += delta / 100;
 
     if (this.get(CharacterComponent).state === CharacterState.WALKING) {
       // if we're walking, check if we're done
