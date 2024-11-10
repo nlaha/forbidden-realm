@@ -30,6 +30,7 @@ import human from "./images/characters/human.png";
 import Depot from "./actors/buildings/depot";
 import Building from "./actors/building";
 import Rock from "./actors/harvestables/rock";
+import Tree from "./actors/harvestables/tree";
 
 export const Tiles = {
   Dirt: new ImageSource(dirt),
@@ -75,14 +76,22 @@ export const Fonts = {
   main: new ImageSource(font),
 } as const;
 
-export const Foliage = {
-  tree1: new ImageSource(tree1),
-} as const;
+export const Foliage = {} as const;
 
 export const Harvestables = {
   rock1: {
     img: new ImageSource(rock1),
     type: Rock,
+    spawnTags: ["dirt"],
+    resourceType: "rock",
+    spawnNum: 5,
+  },
+  tree1: {
+    img: new ImageSource(tree1),
+    type: Tree,
+    spawnTags: ["grass"],
+    resourceType: "wood",
+    spawnNum: 15,
   },
 } as const;
 

@@ -12,6 +12,7 @@ import { Characters, Tiles } from "../resources";
 import {
   BrainComponent,
   CharacterComponent,
+  CharacterRole,
   CharacterState,
   InventoryComponent,
   LivingComponent,
@@ -69,6 +70,50 @@ class Character extends Actor {
       this.get(CharacterComponent).first_name
     );
     this.addChild(nameTag);
+
+    // add role selector to the docuemnt
+    this.addRoleSelectorUI();
+  }
+
+  private addRoleSelectorUI() {
+    const roleSelector = document.getElementById("role-selector");
+
+    const tr = document.createElement("tr");
+    const name_td = document.createElement("td");
+    const role_td = document.createElement("td");
+    // radio button for role selection
+    const role_select = document.createElement("form");
+    role_select.id = `role-${this.id}`;
+    role_select.onchange = (e) => {
+      const role = (e.target as HTMLSelectElement).value as CharacterRole;
+      this.get(CharacterComponent).role = role;
+    };
+    for (const role of Object.values(CharacterRole)) {
+      // add label
+      const label = document.createElement("label");
+      label.htmlFor = `role-${this.id}-${role}`;
+      label.innerHTML = role;
+      const option = document.createElement("input");
+      option.value = role;
+      option.type = "radio";
+      option.name = `role-${this.id}`;
+      option.id = `role-${this.id}-${role}`;
+      role_select.appendChild(option);
+      role_select.appendChild(label);
+
+      // select whatever the current role is
+      if (role === this.get(CharacterComponent).role) {
+        option.checked = true;
+      }
+    }
+
+    name_td.innerHTML = this.get(CharacterComponent).first_name;
+    role_td.appendChild(role_select);
+
+    tr.appendChild(name_td);
+    tr.appendChild(role_td);
+
+    roleSelector!.appendChild(tr);
   }
 
   public update(engine: Engine, delta: number): void {

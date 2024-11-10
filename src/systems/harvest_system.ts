@@ -24,6 +24,7 @@ class HarvestSystem extends System {
     | typeof CharacterComponent
     | typeof InventoryComponent
     | typeof NeighborsComponent
+    | typeof VisionComponent
   >;
 
   public info_table: string | null = null;
@@ -34,6 +35,7 @@ class HarvestSystem extends System {
       CharacterComponent,
       InventoryComponent,
       NeighborsComponent,
+      VisionComponent,
     ]);
   }
   // Lower numbers mean higher priority
@@ -47,6 +49,7 @@ class HarvestSystem extends System {
       const character = entity as Character;
       const characterComponent = character.get(CharacterComponent);
       const neighborsComponent = character.get(NeighborsComponent);
+      const visionComponent = character.get(VisionComponent);
 
       const characterRole = character.get(CharacterComponent).role;
 
@@ -76,7 +79,23 @@ class HarvestSystem extends System {
 
       // check if we have any harvestables in the neighbors
       if (harvestables.length === 0) {
-        continue;
+        // check to see if we can see a harvestable resource
+        const visisbleHarvestables = visionComponent.getWithComponent(
+          HarvestableResourceComponent
+        );
+
+        // if we can see a harvestable, get the closest one
+        const closestVisibleHarvestable = closest_entity(
+          character,
+          visisbleHarvestables
+        );
+
+        // walk to the closest harvestable
+        if (closestVisibleHarvestable) {
+          character.walkTo(
+            closestVisibleHarvestable.get(TransformComponent).pos
+          );
+        }
       }
 
       // filter harvestables that match the character's role

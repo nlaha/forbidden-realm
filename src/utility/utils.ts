@@ -27,15 +27,22 @@ export function spawner(
   edge_threshold: number,
   number: number,
   isoMap: IsometricMap,
-  tileTagFilter: string | undefined = undefined
+  tileTagFilter: string | undefined | readonly string[] = undefined
 ) {
   // pick N random points on the map
   const points: Set<Vector> = new Set();
 
-  // get all tiles with the given tag
-  const tiles = isoMap.tiles.filter((tile) =>
-    tileTagFilter ? tile.tags.has(tileTagFilter) : true
-  );
+  const tileTagsArray = Array.isArray(tileTagFilter)
+    ? tileTagFilter
+    : [tileTagFilter];
+
+  // get all tiles with one of the tags
+  const tiles = isoMap.tiles.filter((tile) => {
+    if (!tileTagsArray) {
+      return true;
+    }
+    return tileTagsArray.some((tag) => tile.tags.has(tag as string));
+  });
 
   // filter out tiles that are solid
   let filteredTiles = tiles.filter((tile) => !tile.solid);

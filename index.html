@@ -7,18 +7,22 @@
     <title>Crimson Game Jam - Fall 2024</title>
 
     <style>
-      @font-face{
+      @font-face {
         font-family: "Alagard";
         font-weight: 100 !important;
         font-style: normal;
         src: url("./alagard.woff") format("woff");
       }
 
+      h2 {
+        font-weight: normal;
+      }
+
       body {
         margin: 0;
         background-color: #181818;
         color: #fff;
-        font-family: 'Alagard', sans-serif;
+        font-family: "Alagard", sans-serif;
       }
 
       #game {
@@ -36,7 +40,6 @@
         image-rendering: pixelated; /* Universal support since 2021   */
         image-rendering: optimize-contrast; /* CSS3 Proposed                  */
         -ms-interpolation-mode: nearest-neighbor; /* IE8+                           */
-        
       }
 
       #palette {
@@ -94,14 +97,19 @@
 
       .palette-label {
         font-size: 1rem;
-        font-weight: bold;
-        color: #fff;
+        color: #ffffff;
         margin: 0.5rem;
       }
 
       .game-container {
         display: flex;
         flex-direction: column;
+      }
+
+      .flex-row {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
       }
     </style>
   </head>
@@ -112,26 +120,43 @@
         <canvas id="game"></canvas>
         <div id="palette"></div>
       </div>
-      <div id="info-panel" style="margin: 1rem">
-        <!-- table to display info about each character, first name, state, and inventory -->
-        <table class="info-table">
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>State</th>
-              <th>Inventory</th>
-              <th>Visible Entities</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div>
-        <!-- game stats display -->
-        <div id="game-stats" style="margin: 1rem">
-          <h2>Game Stats</h2>
-          <p>Time: <span id="time">0</span></p>
-          <p>Gold: <span id="gold">0</span></p>
+      <div style="margin: 1rem">
+        <div id="info-panel">
+          <h2>State Info</h2>
+          <!-- table to display info about each character, first name, state, and inventory -->
+          <table class="info-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>State</th>
+                <th>Inventory</th>
+                <th>Visible Entities</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="flex-row">
+          <!-- game stats display -->
+          <div id="game-stats">
+            <h2>Game Stats</h2>
+            <p>Time: <span id="time">0</span></p>
+            <p>Gold: <span id="gold">0</span></p>
+          </div>
+          <!-- game controls -->
+          <div id="game-controls">
+            <h2>Role Assignments</h2>
+            <table class="info-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                </tr>
+              </thead>
+              <tbody id="role-selector"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </main>
     <script type="module" src="./src/main.ts"></script>

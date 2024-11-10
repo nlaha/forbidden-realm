@@ -3,17 +3,18 @@ import { Tiles, Buildings, Harvestables } from "./resources";
 import Building from "./actors/building";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 import CameraController from "./utility/camera_controller";
-import Tree from "./actors/tree";
+import Tree from "./actors/harvestables/tree";
 import Character from "./actors/character";
 import Harvestable from "./actors/harvestable";
 import { init_navgrid, mark_tiles_as_solid, spawner } from "./utility/utils";
 import { AStarFinder } from "astar-typescript";
 import { Grid } from "@evilkiwi/astar";
-import CharacterStateSystem from "./systems/character_state_system";
+import IdleSystem from "./systems/idle_system";
 import VisionSystem from "./systems/vision_system";
 import HarvestSystem from "./systems/harvest_system";
 import DepotSystem from "./systems/depo_system";
 import NeighborSystem from "./systems/neighbor_system";
+import UIUpdateSystem from "./systems/ui_update_system";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -112,23 +113,25 @@ class MainScene extends Scene {
       }
     }
 
-    // spawn trees on grass tiles
-    spawner(5, 10, this.isoMap, "grass").forEach((pos) => {
-      const tree = new Tree(this.isoMap, { pos: pos });
-      this.add(tree);
-    });
-
-    // spawn rocks on dirt tiles
-    spawner(5, 4, this.isoMap, "dirt").forEach((pos) => {
-      const rock = new Harvestables.rock1.type(
+    // spawn harvestables
+    for (let harvestable of Object.values(Harvestables)) {
+      console.log(`Spawning ${harvestable.type.name}`);
+      spawner(
+        5,
+        harvestable.spawnNum,
         this.isoMap,
-        { pos: pos },
-        Harvestables.rock1.img,
-        "rock"
-      );
-      this.add(rock);
-      this.harvestables.push(rock);
-    });
+        harvestable.spawnTags
+      ).forEach((pos) => {
+        const obj = new harvestable.type(
+          this.isoMap,
+          { pos: pos },
+          harvestable.img,
+          harvestable.resourceType
+        );
+        this.add(obj);
+        this.harvestables.push(obj);
+      });
+    }
 
     // initialize pathfinding
     mark_tiles_as_solid(this.isoMap);
@@ -179,11 +182,12 @@ class MainScene extends Scene {
       palette?.appendChild(div);
     }
 
-    this.world.add(CharacterStateSystem);
+    this.world.add(IdleSystem);
     this.world.add(VisionSystem);
     this.world.add(HarvestSystem);
     this.world.add(DepotSystem);
     this.world.add(NeighborSystem);
+    this.world.add(UIUpdateSystem);
   }
 }
 

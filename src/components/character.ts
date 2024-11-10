@@ -66,16 +66,16 @@ export class InventoryComponent extends Component {
 }
 
 export enum CharacterState {
-  WALKING,
-  IDLE,
-  HARVESTING,
-  DEPOSITING,
+  WALKING = "walking",
+  IDLE = "idle",
+  HARVESTING = "harvesting",
+  DEPOSITING = "depositing",
 }
 
 export enum CharacterRole {
-  MINER,
-  FARMER,
-  WOODCUTTER,
+  MINER = "miner",
+  FARMER = "farmer",
+  WOODCUTTER = "woodcutter",
 }
 
 export class CharacterComponent extends Component {

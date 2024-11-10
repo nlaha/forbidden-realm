@@ -15,8 +15,12 @@ class Game extends Engine {
     super({
       canvasElementId: "game",
       viewport: {
-        width: 1280,
-        height: 500,
+        width: 1920,
+        height: 600,
+      },
+      resolution: {
+        width: 1920,
+        height: 600,
       },
       pixelArt: true,
       scenes: {
