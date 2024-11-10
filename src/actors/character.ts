@@ -32,6 +32,16 @@ const DIRECTIONS = {
   west: vec(-1, 0),
 };
 
+const spriteSheet = SpriteSheet.fromImageSource({
+  image: Characters.Human,
+  grid: {
+    rows: 1,
+    columns: 4,
+    spriteWidth: 32,
+    spriteHeight: 48,
+  },
+});
+
 // static var for currently selected character
 let selectedCharacter: Character | null = null;
 
@@ -50,17 +60,6 @@ class Character extends Actor {
     this.addComponent(new CharacterComponent());
     this.addComponent(new InventoryComponent());
     this.addComponent(new VisionComponent());
-    this.addComponent(new NeighborsComponent());
-
-    this.spriteSheet = SpriteSheet.fromImageSource({
-      image: Characters.Human,
-      grid: {
-        rows: 4,
-        columns: 1,
-        spriteWidth: 32,
-        spriteHeight: 48,
-      },
-    });
 
     this.graphics.use(this.spriteSheet.getSprite(0, 0));
 
@@ -74,6 +73,23 @@ class Character extends Actor {
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
+
+    if (this.vel.x > 0) {
+      if (this.vel.y > 0) {
+        this.graphics.use(spriteSheet.getSprite(1, 0));
+      } else {
+        this.graphics.use(spriteSheet.getSprite(3, 0));
+      }
+    } else if (this.vel.x < 0) {
+      if (this.vel.y > 0) {
+        this.graphics.use(spriteSheet.getSprite(0, 0));
+      } else {
+        this.graphics.use(spriteSheet.getSprite(2, 0));
+      }
+    }
+
+    // we recover energy over time
+    this.get(LivingComponent).energy += delta / 100;
 
     if (this.get(CharacterComponent).state === CharacterState.WALKING) {
       // if we're walking, check if we're done
