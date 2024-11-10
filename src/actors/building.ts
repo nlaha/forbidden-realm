@@ -1,10 +1,20 @@
-import { Actor, ImageSource, IsometricEntityComponent } from "excalibur";
+import {
+  Actor,
+  Color,
+  Font,
+  ImageSource,
+  IsometricEntityComponent,
+  Label,
+  vec,
+} from "excalibur";
 import { Buildings, Tiles } from "../resources";
 import { game } from "../main";
 
 import buildingFrag from "../shaders/building.frag";
 import ProgressIndicator from "./progress_bar";
 import { compute_iso_collider, mark_tile_solid_single } from "../utility/utils";
+import { InventoryComponent } from "../components/character";
+import { BuildingComponent } from "../components/building";
 
 /**
  * Building actor
@@ -14,6 +24,7 @@ class Building extends Actor {
   radius: number = 1;
   construction_progress: number = 0;
   placed: boolean = false;
+  label: Label;
 
   constructor(isoMap: ex.IsometricMap, pos: ex.Vector, img: ImageSource) {
     super({
@@ -24,6 +35,21 @@ class Building extends Actor {
     this.isoMap = isoMap;
 
     this.addComponent(new IsometricEntityComponent(this.isoMap));
+    this.addComponent(new InventoryComponent());
+    this.addComponent(new BuildingComponent());
+
+    // add nametag showing the building inventory capacity
+    const label = new Label({
+      text: "0/0",
+      pos: vec(0, 0),
+      color: Color.White,
+      font: new Font({ size: 10 }),
+      z: 1000,
+    });
+
+    this.addChild(label);
+    this.label = label;
+
     this.graphics.use(img.toSprite());
 
     // assign custom material for outlines
@@ -72,6 +98,10 @@ class Building extends Actor {
           .kill();
       }
     }
+
+    // update label
+    const inventory = this.get(InventoryComponent);
+    this.label.text = `${inventory.items.length}/${inventory.capacity}`;
   }
 
   public place() {

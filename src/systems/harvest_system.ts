@@ -50,6 +50,11 @@ class HarvestSystem extends System {
         continue;
       }
 
+      // make sure we have inventory space
+      if (!character.get(InventoryComponent).hasCapacity()) {
+        continue;
+      }
+
       const harvestables = visionComponent.getWithComponent(
         HarvestableResourceComponent
       );

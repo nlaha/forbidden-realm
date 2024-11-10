@@ -48,7 +48,7 @@ export class BrainComponent extends Component {
 
 export class InventoryComponent extends Component {
   public items: string[] = [];
-  public capacity: number = 10;
+  public capacity: number = 2;
 
   public onAdd() {}
 

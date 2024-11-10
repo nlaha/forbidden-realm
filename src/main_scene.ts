@@ -12,6 +12,7 @@ import { Grid } from "@evilkiwi/astar";
 import CharacterStateSystem from "./systems/character_state_system";
 import VisionSystem from "./systems/vision_system";
 import HarvestSystem from "./systems/harvest_system";
+import DepotSystem from "./systems/depo_system";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -151,6 +152,7 @@ class MainScene extends Scene {
     this.world.add(CharacterStateSystem);
     this.world.add(VisionSystem);
     this.world.add(HarvestSystem);
+    this.world.add(DepotSystem);
   }
 }
 

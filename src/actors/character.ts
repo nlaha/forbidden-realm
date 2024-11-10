@@ -61,16 +61,9 @@ class Character extends Actor {
 
     this.graphics.use(spriteSheet.getSprite(0, 0));
 
-    // assign custom material for outlines
-    this.graphics.material = game.graphicsContext.createMaterial({
-      name: "characterMaterial",
-      // load from shaders/outline.frag
-      fragmentSource: characterFrag,
-    });
-
     // add character name to the graphics
     const nameTag = new NameTag(
-      { width: 32, height: 4, pos: vec(0, -10) },
+      { width: 32, height: 4, pos: vec(0, -20) },
       this.get(CharacterComponent).first_name
     );
     this.addChild(nameTag);
