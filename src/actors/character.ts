@@ -31,6 +31,16 @@ const DIRECTIONS = {
   west: vec(-1, 0),
 };
 
+const spriteSheet = SpriteSheet.fromImageSource({
+  image: Characters.Human,
+  grid: {
+    rows: 1,
+    columns: 4,
+    spriteWidth: 32,
+    spriteHeight: 48,
+  },
+});
+
 // static var for currently selected character
 let selectedCharacter: Character | null = null;
 
@@ -49,16 +59,6 @@ class Character extends Actor {
     this.addComponent(new InventoryComponent());
     this.addComponent(new VisionComponent());
 
-    const spriteSheet = SpriteSheet.fromImageSource({
-      image: Characters.Human,
-      grid: {
-        rows: 4,
-        columns: 1,
-        spriteWidth: 32,
-        spriteHeight: 48,
-      },
-    });
-
     this.graphics.use(spriteSheet.getSprite(0, 0));
 
     // add character name to the graphics
@@ -71,6 +71,23 @@ class Character extends Actor {
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
+
+    if (this.vel.x > 0) {
+      if (this.vel.y > 0) {
+        this.graphics.use(spriteSheet.getSprite(1, 0));
+      }
+      else {
+        this.graphics.use(spriteSheet.getSprite(3, 0));
+      }
+    }
+    else if (this.vel.x < 0) {
+      if (this.vel.y > 0) {
+        this.graphics.use(spriteSheet.getSprite(0, 0));
+      }
+      else {
+        this.graphics.use(spriteSheet.getSprite(2, 0));
+      }
+    }
 
     // we recover energy over time
     this.get(LivingComponent).energy += delta / 100;
