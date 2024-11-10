@@ -49,6 +49,7 @@ let selectedCharacter: Character | null = null;
 class Character extends Actor {
   isoMap: IsometricMap;
   moveSpeedMs: number = 100;
+  hungerRate: number = 1;
 
   constructor(isoMap: IsometricMap, config: ActorArgs) {
     super(config);
@@ -92,7 +93,7 @@ class Character extends Actor {
 
     // every second the character isn't idle, they lose 1 food
     if (this.get(CharacterComponent).state !== CharacterState.IDLE) {
-      this.get(LivingComponent).starve((delta / 2000) * 1);
+      this.get(LivingComponent).starve((delta / 2000) * this.hungerRate);
     }
 
     // if the character is hungry, they move slower
