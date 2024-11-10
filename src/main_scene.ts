@@ -23,6 +23,7 @@ import DepotSystem from "./systems/depo_system";
 import NeighborSystem from "./systems/neighbor_system";
 import UIUpdateSystem from "./systems/ui_update_system";
 import DisasterSystem from "./systems/disaster_system";
+import DialogueSystem from "./systems/dialogue_system";
 import { CharacterComponent, CharacterRole } from "./components/character";
 
 import { Storage } from "./storage";
@@ -63,9 +64,6 @@ class MainScene extends Scene {
   public onInitialize(engine: Engine) {
     // first, add camera controller
     this.add(new CameraController());
-
-    document.getElementById("dialogue-box")!.classList.add("hidden-fade");
-    document.getElementById("dialogue")!.innerText = "Welcome to the game!";
 
     // initialize status table
     this.status_table = new Tabulator("#status-table", {
@@ -299,6 +297,7 @@ class MainScene extends Scene {
     this.world.add(UIUpdateSystem);
     this.world.add(DisasterSystem);
     this.world.add(EatSystem);
+    this.world.add(DialogueSystem);
   }
 }
 
