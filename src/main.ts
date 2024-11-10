@@ -28,7 +28,7 @@ class Game extends Engine {
       },
       displayMode: DisplayMode.FitContainer,
       backgroundColor: Color.Black,
-      pointerScope: PointerScope.Document,
+      pointerScope: PointerScope.Canvas,
     });
   }
   initialize() {

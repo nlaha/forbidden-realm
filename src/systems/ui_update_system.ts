@@ -5,6 +5,7 @@ import {
   InventoryComponent,
   VisionComponent,
 } from "../components/character";
+import MainScene from "../main_scene";
 
 class UIUpdateSystem extends System {
   query: Query<
@@ -12,8 +13,6 @@ class UIUpdateSystem extends System {
     | typeof InventoryComponent
     | typeof VisionComponent
   >;
-
-  public info_table: string | null = null;
 
   constructor(world: World) {
     super();
@@ -30,37 +29,41 @@ class UIUpdateSystem extends System {
   public systemType = SystemType.Update;
 
   public update(delta: number) {
-    // update html in info-panel
-    const infoPanel = document.getElementById("info-panel");
-    // get table body
-    const tableBody = infoPanel!.querySelector("tbody");
-
-    this.info_table = this.query.entities
-      .map((entity) => {
-        const character = entity as Character;
-        const characterComponent = character.get(CharacterComponent);
-        const inventoryComponent = character.get(InventoryComponent);
-        const visionComponent = character.get(VisionComponent);
-
-        return `
-          <tr>
-            <td>${characterComponent.first_name}</td>
-            <td>${characterComponent.state}</td>
-            <td>${inventoryComponent.items.join(", ")}</td>
-            <td>${Array.from(visionComponent.visibleEntities)
-              .map((e) => e.name)
-              .join(", ")}</td>
-          </tr>
-        `;
-      })
-      .join("");
-
-    // check if we need to update the table
-    if (tableBody!.innerHTML === this.info_table) {
+    if (this.query.entities.length === 0) {
+      console.log("No characters found in UIUpdateSystem");
       return;
     }
 
-    tableBody!.innerHTML = this.info_table ?? "";
+    // update tabulator table data in main scene
+    const scene = this.query.entities[0].scene as MainScene;
+
+    if (!scene.status_table) {
+      console.log("No status_table found in UIUpdateSystem");
+      return;
+    }
+
+    const newData = this.query.entities.map((entity, idx) => {
+      const character = entity as Character;
+      const characterComponent = character.get(CharacterComponent);
+      const inventoryComponent = character.get(InventoryComponent);
+      const visionComponent = character.get(VisionComponent);
+
+      return {
+        id: idx,
+        eid: character.id,
+        name: characterComponent.first_name,
+        role: characterComponent.role,
+        state: characterComponent.state,
+        inventory: inventoryComponent.items.join(""),
+        vision: visionComponent.visibleEntities.size,
+      };
+    });
+
+    if (scene.status_table.getData().length === 0) {
+      scene.status_table.setData(newData);
+    } else {
+      scene.status_table.updateData(newData);
+    }
   }
 }
 

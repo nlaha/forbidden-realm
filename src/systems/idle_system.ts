@@ -36,8 +36,7 @@ class IdleSystem extends System {
     ]);
   }
   // Lower numbers mean higher priority
-  // 99 is low priority
-  public priority = 99;
+  public priority = 150;
   // Run this system in the "update" phase
   public systemType = SystemType.Update;
 
@@ -45,9 +44,6 @@ class IdleSystem extends System {
     for (let entity of this.query.entities) {
       const character = entity as Character;
       const characterComponent = character.get(CharacterComponent);
-      const visionComponent = character.get(VisionComponent);
-      const inventoryComponent = character.get(InventoryComponent);
-
       // make sure our state is IDLE
       if (characterComponent.state !== CharacterState.IDLE) {
         continue;

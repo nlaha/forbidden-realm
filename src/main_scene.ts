@@ -1,13 +1,17 @@
-import { Actor, Engine, IsometricMap, Scene, vec } from "excalibur";
+import {
+  Actor,
+  Engine,
+  EntityManager,
+  IsometricMap,
+  Scene,
+  vec,
+} from "excalibur";
+import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { Tiles, Buildings, Harvestables } from "./resources";
-import Building from "./actors/building";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 import CameraController from "./utility/camera_controller";
-import Tree from "./actors/harvestables/tree";
 import Character from "./actors/character";
-import Harvestable from "./actors/harvestable";
 import { init_navgrid, mark_tiles_as_solid, spawner } from "./utility/utils";
-import { AStarFinder } from "astar-typescript";
 import { Grid } from "@evilkiwi/astar";
 import IdleSystem from "./systems/idle_system";
 import VisionSystem from "./systems/vision_system";
@@ -15,6 +19,7 @@ import HarvestSystem from "./systems/harvest_system";
 import DepotSystem from "./systems/depo_system";
 import NeighborSystem from "./systems/neighbor_system";
 import UIUpdateSystem from "./systems/ui_update_system";
+import { CharacterComponent } from "./components/character";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -25,11 +30,12 @@ class MainScene extends Scene {
   // grid of integers for pathfinding
   navgrid: Grid | null = null;
 
-  harvestables: Harvestable[] = [];
+  harvestables: Actor[] = [];
+
+  status_table: any | null = null;
 
   gold: number = 0;
   gameTime: number = 0;
-
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
     // increment game time on document
@@ -46,6 +52,43 @@ class MainScene extends Scene {
   public onInitialize(engine: Engine) {
     // first, add camera controller
     this.add(new CameraController());
+
+    // initialize status table
+    this.status_table = new Tabulator("#status-table", {
+      height: 205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+      data: [], //assign data to table
+      layout: "fitColumns", //fit columns to width of table (optional)
+      columns: [
+        //Define Table Columns
+        { title: "ID", field: "eid", width: 50 },
+        { title: "Name", field: "name", width: 150 },
+        { title: "State", field: "state" },
+        { title: "Visible Objects", field: "vision" },
+        { title: "Inventory", field: "inventory" },
+        {
+          title: "Role (Click to change)",
+          field: "role",
+          editor: "list",
+          cellEdited: function (cell) {
+            const entity = engine.currentScene.world.entityManager.getById(
+              cell.getRow().getData().eid
+            );
+            const character = entity as Character;
+            const characterComponent = character.get(CharacterComponent);
+            characterComponent.role = cell.getData().role;
+          },
+          editorParams: {
+            multiSelect: true,
+            values: {
+              miner: "Miner",
+              farmer: "Farmer",
+              woodcutter: "Woodcutter",
+              idle: "Idle",
+            },
+          },
+        },
+      ],
+    });
 
     // initialize scene actors
     this.isoMap = new IsometricMap({

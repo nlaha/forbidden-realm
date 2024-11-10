@@ -73,17 +73,29 @@ class HarvestSystem extends System {
         continue;
       }
 
-      let harvestables = neighborsComponent.getWithComponent(
-        HarvestableResourceComponent
+      // check to see if we can see a harvestable resource
+      const visisbleHarvestables = visionComponent
+        .getWithComponent(HarvestableResourceComponent)
+        .filter((harvestable) => {
+          const harvestableComponent = harvestable.get(
+            HarvestableResourceComponent
+          );
+          return harvestableComponent.harvestableBy.includes(characterRole);
+        });
+
+      // return if we can't see any harvestable resources
+      if (visisbleHarvestables.length === 0) {
+        continue;
+      }
+
+      // check if any of these are in the neighbors
+      const neighbors = Array.from(neighborsComponent.neighbors);
+      const harvestables = visisbleHarvestables.filter((harvestable) =>
+        neighbors.includes(harvestable)
       );
 
-      // check if we have any harvestables in the neighbors
-      if (harvestables.length === 0) {
-        // check to see if we can see a harvestable resource
-        const visisbleHarvestables = visionComponent.getWithComponent(
-          HarvestableResourceComponent
-        );
-
+      // if we don't have any harvestables in our neighbors, walk to the closest one
+      if (harvestables.length === 0 && visisbleHarvestables.length > 0) {
         // if we can see a harvestable, get the closest one
         const closestVisibleHarvestable = closest_entity(
           character,
@@ -97,14 +109,6 @@ class HarvestSystem extends System {
           );
         }
       }
-
-      // filter harvestables that match the character's role
-      harvestables = harvestables.filter((harvestable) => {
-        const harvestableComponent = harvestable.get(
-          HarvestableResourceComponent
-        );
-        return harvestableComponent.harvestableBy.includes(characterRole);
-      });
 
       const closestHarvestable = closest_entity(character, harvestables);
 

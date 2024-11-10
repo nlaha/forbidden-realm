@@ -31,6 +31,7 @@ import Depot from "./actors/buildings/depot";
 import Building from "./actors/building";
 import Rock from "./actors/harvestables/rock";
 import Tree from "./actors/harvestables/tree";
+import Farm from "./actors/buildings/farm";
 
 export const Tiles = {
   Dirt: new ImageSource(dirt),
@@ -66,7 +67,7 @@ export const Buildings = {
   Farm: {
     name: "Farm",
     img: new ImageSource(farm_healthy),
-    type: Building,
+    type: Farm,
     walkability: 0,
     cost: 400,
   },
@@ -83,14 +84,14 @@ export const Harvestables = {
     img: new ImageSource(rock1),
     type: Rock,
     spawnTags: ["dirt"],
-    resourceType: "rock",
+    resourceType: "🪨",
     spawnNum: 5,
   },
   tree1: {
     img: new ImageSource(tree1),
     type: Tree,
     spawnTags: ["grass"],
-    resourceType: "wood",
+    resourceType: "🪵",
     spawnNum: 15,
   },
 } as const;
@@ -124,7 +125,6 @@ for (const res of [
   Object.values(Tiles),
   Object.values(Buildings).map((b) => b.img),
   Object.values(Fonts),
-  Object.values(Foliage),
   Object.values(Characters),
   Object.values(Harvestables).map((h) => h.img),
 ].flat()) {
