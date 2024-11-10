@@ -23,6 +23,8 @@ class Tree extends Harvestable {
     this.get(HarvestableResourceComponent).harvestableBy = [
       CharacterRole.WOODCUTTER,
     ];
+
+    this.addTag("tree");
   }
 
   public onInitialize() {}

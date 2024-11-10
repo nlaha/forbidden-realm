@@ -119,18 +119,23 @@ export function mark_tiles_as_solid(isoMap: IsometricMap) {
       // check if the collider intersects with the tile
       if (collider.collider.get()?.contains(worldPos)) {
         isSolid = true;
-        //tile.addGraphic(Tiles.Red.toSprite());
+
+        if (collider.tags.has("tree")) {
+          tile.addGraphic(Tiles.Forest.toSprite());
+        } else if (collider.tags.has("rock")) {
+          tile.addGraphic(Tiles.Sand.toSprite());
+        }
       }
     }
 
     if (isSolid) {
       tile.solid = true;
       (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
-      tile.addGraphic(Tiles.Red.toSprite());
+      //tile.addGraphic(Tiles.Forest.toSprite());
     } else {
       tile.solid = false;
       (game.currentScene as MainScene).navgrid![tile.y][tile.x] = 0;
-      tile.addGraphic(Tiles.Green.toSprite());
+      //tile.addGraphic(Tiles.Green.toSprite());
     }
   }
 }

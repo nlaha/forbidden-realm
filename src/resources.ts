@@ -7,6 +7,7 @@ import water from "./images/tiles/water.png";
 import sand from "./images/tiles/sand.png";
 import Red from "./images/tiles/red.png";
 import Green from "./images/tiles/green.png";
+import forest from "./images/tiles/forest.png";
 
 // import buildings
 import house1 from "./images/buildings/house1.png";
@@ -14,6 +15,7 @@ import blacksmith from "./images/buildings/blacksmith.png";
 import bridge from "./images/buildings/bridge.png";
 import farm_healthy from "./images/buildings/farm_healthy.png";
 import farm_dying from "./images/buildings/farm_dying.png";
+import church from "./images/buildings/church.png";
 
 // effects
 import lightning from "./images/effects/lightning.png";
@@ -35,6 +37,7 @@ import Building from "./actors/building";
 import Rock from "./actors/harvestables/rock";
 import Tree from "./actors/harvestables/tree";
 import Farm from "./actors/buildings/farm";
+import Church from "./actors/buildings/church";
 
 export const Tiles = {
   Dirt: new ImageSource(dirt),
@@ -43,40 +46,7 @@ export const Tiles = {
   Sand: new ImageSource(sand),
   Red: new ImageSource(Red),
   Green: new ImageSource(Green),
-} as const;
-
-export const Buildings = {
-  House1: {
-    name: "House",
-    img: new ImageSource(house1),
-    type: Depot,
-    walkability: -1,
-    cost: new Map([
-      ["🪵", 2],
-      ["🪨", 2],
-    ]),
-  },
-  Blacksmith: {
-    name: "Blacksmith",
-    img: new ImageSource(blacksmith),
-    type: Building,
-    walkability: -1,
-    cost: new Map([["🪨", 5]]),
-  },
-  Bridge: {
-    name: "Bridge",
-    img: new ImageSource(bridge),
-    type: Building,
-    walkability: 0,
-    cost: new Map([["🪵", 1]]),
-  },
-  Farm: {
-    name: "Farm",
-    img: new ImageSource(farm_healthy),
-    type: Farm,
-    walkability: 0,
-    cost: new Map([["🪵", 5]]),
-  },
+  Forest: new ImageSource(forest),
 } as const;
 
 export const Fonts = {
@@ -110,6 +80,50 @@ export const Effects = {
   Lightning: new ImageSource(lightning),
 };
 
+export const Buildings = {
+  House1: {
+    name: "House",
+    img: new ImageSource(house1),
+    type: Depot,
+    walkability: -1,
+    cost: new Map([
+      ["🪵", 2],
+      ["🪨", 2],
+    ]),
+  },
+  Blacksmith: {
+    name: "Blacksmith",
+    img: new ImageSource(blacksmith),
+    type: Building,
+    walkability: -1,
+    cost: new Map([["🪨", 5]]),
+  },
+  Bridge: {
+    name: "Bridge",
+    img: new ImageSource(bridge),
+    type: Building,
+    walkability: 0,
+    cost: new Map([["🪵", 1]]),
+  },
+  Farm: {
+    name: "Farm",
+    img: new ImageSource(farm_healthy),
+    type: Farm,
+    walkability: 0,
+    cost: new Map([["🪵", 5]]),
+  },
+  Church: {
+    name: "Church",
+    img: new ImageSource(church),
+    type: Church,
+    walkability: -1,
+    cost: new Map([
+      ["🪵", 0],
+      ["🪨", 1],
+    ]),
+  },
+} as const;
+
 const spriteFontSheet = SpriteSheet.fromImageSource({
   image: Fonts.main,
   grid: {
@@ -133,9 +147,9 @@ export const loader = new Loader();
 
 for (const res of [
   Object.values(Tiles),
-  Object.values(Buildings).map((b) => b.img),
   Object.values(Fonts),
   Object.values(Characters),
+  Object.values(Buildings).map((b) => b.img),
   Object.values(Harvestables).map((h) => h.img),
   Object.values(Effects),
 ].flat()) {

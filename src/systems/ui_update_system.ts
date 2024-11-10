@@ -111,12 +111,14 @@ class UIUpdateSystem extends System {
       })
       .filter((data) => data.state !== CharacterState.DEAD);
 
-    if (scene.status_table.getData().length === 0) {
-      scene.status_table.setData(newData);
-    } else {
-      // remove role column
-      const dataUpdate = newData.map((data) => {
-        return {
+    // if we can't find the entity ID in the table, add it
+    const currentIds = scene.status_table.getData().map((data) => data.id);
+    for (let data of newData) {
+      if (!currentIds.includes(data.id)) {
+        scene.status_table.addRow(data);
+      } else {
+        // remove role column
+        scene.status_table.updateRow(data.id, {
           id: data.id,
           name: data.name,
           state: data.state,
@@ -124,9 +126,8 @@ class UIUpdateSystem extends System {
           food: data.food,
           inventory: data.inventory,
           vision: data.vision,
-        };
-      });
-      scene.status_table.updateData(dataUpdate);
+        });
+      }
     }
   }
 }

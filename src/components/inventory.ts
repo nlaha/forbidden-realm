@@ -21,6 +21,13 @@ export class InventoryComponent extends Component {
     return Array.from(this.items.values()).reduce((a, b) => a + b, 0) ?? 0;
   }
 
+  public clearInventory() {
+    for (let item of this.items.keys()) {
+      Storage.removeResource(item, this.items.get(item)!);
+    }
+    this.items.clear();
+  }
+
   public removeItem(item: string | undefined = undefined): string | null {
     // if no item is specified, remove any item
     if (!item) {

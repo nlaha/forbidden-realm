@@ -15,6 +15,8 @@ class Rock extends Harvestable {
     this.get(HarvestableResourceComponent).harvestableBy = [
       CharacterRole.MINER,
     ];
+
+    this.addTag("rock");
   }
 }
 
