@@ -256,7 +256,7 @@ class MainScene extends Scene {
         .map((key) => key.repeat(building.cost.get(key)!))
         .join("");
 
-      label.innerHTML = `${building.name} - ${costString}`;
+      label.innerHTML = `${building.name} <br> ${building.description} <br> ${costString}`;
       label.className = "palette-label";
       div.appendChild(label);
 

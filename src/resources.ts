@@ -86,6 +86,7 @@ export const Buildings = {
     img: new ImageSource(house1),
     type: Depot,
     walkability: -1,
+    description: "Stores resources",
     cost: new Map([
       ["🪵", 2],
       ["🪨", 2],
@@ -96,6 +97,7 @@ export const Buildings = {
     img: new ImageSource(blacksmith),
     type: Building,
     walkability: -1,
+    description: "Speeds up gathering",
     cost: new Map([["🪨", 5]]),
   },
   Bridge: {
@@ -103,6 +105,7 @@ export const Buildings = {
     img: new ImageSource(bridge),
     type: Building,
     walkability: 0,
+    description: "Allows crossing rivers",
     cost: new Map([["🪵", 1]]),
   },
   Farm: {
@@ -110,6 +113,7 @@ export const Buildings = {
     img: new ImageSource(farm_healthy),
     type: Farm,
     walkability: 0,
+    description: "Food source for farmers",
     cost: new Map([["🪵", 5]]),
   },
   Church: {
@@ -117,6 +121,7 @@ export const Buildings = {
     img: new ImageSource(church),
     type: Church,
     walkability: -1,
+    description: "Recruit new followers",
     cost: new Map([
       ["🪵", 8],
       ["🪨", 8],
