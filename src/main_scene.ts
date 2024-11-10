@@ -9,6 +9,9 @@ import Harvestable from "./actors/harvestable";
 import { init_navgrid, mark_tiles_as_solid, spawner } from "./utility/utils";
 import { AStarFinder } from "astar-typescript";
 import { Grid } from "@evilkiwi/astar";
+import CharacterStateSystem from "./systems/character_state_system";
+import VisionSystem from "./systems/vision_system";
+import HarvestSystem from "./systems/harvest_system";
 
 class MainScene extends Scene {
   isoMap: ex.IsometricMap;
@@ -18,6 +21,8 @@ class MainScene extends Scene {
 
   // grid of integers for pathfinding
   navgrid: Grid | null = null;
+
+  harvestables: Harvestable[] = [];
 
   /**
    * Start-up logic, called once
@@ -103,9 +108,11 @@ class MainScene extends Scene {
       const rock = new Harvestable(
         this.isoMap,
         { pos: pos },
-        Harvestables.rock1
+        Harvestables.rock1,
+        "rock"
       );
       this.add(rock);
+      this.harvestables.push(rock);
     });
 
     // initialize pathfinding
@@ -140,6 +147,10 @@ class MainScene extends Scene {
 
       palette?.appendChild(img);
     }
+
+    this.world.add(CharacterStateSystem);
+    this.world.add(VisionSystem);
+    this.world.add(HarvestSystem);
   }
 }
 

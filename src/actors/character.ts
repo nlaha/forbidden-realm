@@ -11,8 +11,11 @@ import { Characters, Tiles } from "../resources";
 import {
   BrainComponent,
   CharacterComponent,
+  CharacterState,
+  InventoryComponent,
   LivingComponent,
-} from "../components/character_components";
+  VisionComponent,
+} from "../components/character";
 import { game } from "../main";
 
 import characterFrag from "../shaders/character.frag";
@@ -42,6 +45,9 @@ class Character extends Actor {
     this.addComponent(new LivingComponent());
     this.addComponent(new BrainComponent());
     this.addComponent(new CharacterComponent());
+    this.addComponent(new InventoryComponent());
+    this.addComponent(new VisionComponent());
+
     this.graphics.use(Characters.Worker.toSprite());
 
     // assign custom material for outlines
@@ -62,60 +68,91 @@ class Character extends Actor {
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
 
-    if (this.get(LivingComponent).canAct()) {
-      this.get(LivingComponent).energy -= 25;
+    // we recover energy over time
+    this.get(LivingComponent).energy += delta / 100;
 
-      // get a random tile point
-      const random_tile = vec(
-        Math.floor(Math.random() * this.isoMap.columns),
-        Math.floor(Math.random() * this.isoMap.rows)
-      );
-
-      // reroll until we get one that is not solid
-      while (this.isoMap.getTile(random_tile.x, random_tile.y)?.solid) {
-        random_tile.x = Math.floor(Math.random() * this.isoMap.columns);
-        random_tile.y = Math.floor(Math.random() * this.isoMap.rows);
+    if (this.get(CharacterComponent).state === CharacterState.WALKING) {
+      // if we're walking, check if we're done
+      if (this.actions.getQueue().isComplete()) {
+        this.get(CharacterComponent).state = CharacterState.IDLE;
       }
+    }
+  }
 
-      // get start tile
-      const start = this.isoMap.worldToTile(this.pos);
+  public walkTo(target: Vector): void {
+    // get start tile
+    const start = this.isoMap.worldToTile(this.pos);
+    const end = this.isoMap.worldToTile(target);
 
-      // find the path to the random tile
-      // get main scene
-      const scene = game.currentScene as MainScene;
-      const path = search({
-        cutCorners: false,
-        diagonal: false,
-        from: [start.x, start.y],
-        to: [random_tile.x, random_tile.y],
-        grid: scene.navgrid ?? [],
-      });
+    // console.log(`Walking from ${start.x}, ${start.y} to ${end.x}, ${end.y}`);
 
-      if (path === null) {
-        console.warn("No path found");
-        return;
-      }
+    // check if there's a tile on the end position
+    const endTile = this.isoMap.getTile(end.x, end.y);
+    if (!endTile) {
+      console.warn("No tile found at target position");
+      return;
+    }
 
-      // remove second graphic from tiles
-      for (let i = 0; i < this.isoMap.tiles.length; i++) {
-        const tile = this.isoMap.tiles[i];
-        if (tile.getGraphics().length > 1) {
-          tile.removeGraphic(tile.getGraphics()[1]);
+    // if end isn't walkable, find the nearest walkable tile
+    // searching out in the spiral pattern from the target tile
+    const maxRadius = 10;
+    let found = false;
+    for (let radius = 1; radius < maxRadius; radius++) {
+      for (let x = -radius; x <= radius; x++) {
+        for (let y = -radius; y <= radius; y++) {
+          // check if we're on the edge
+          if (Math.abs(x) === radius || Math.abs(y) === radius) {
+            const tile = this.isoMap.getTile(end.x + x, end.y + y);
+            if (tile && tile.solid === false) {
+              end.x += x;
+              end.y += y;
+              found = true;
+              break;
+            }
+          }
+        }
+        if (found) {
+          break;
         }
       }
-
-      // move along the path
-      for (let i = 0; i < path.length; i++) {
-        const next_tile_pos = path[i];
-        this.actions.easeTo(
-          this.isoMap.tileToWorld(vec(next_tile_pos[0], next_tile_pos[1])),
-          100
-        );
+      if (found) {
+        break;
       }
     }
 
-    // we recover energy over time
-    this.get(LivingComponent).energy += delta / 100;
+    // find the path to the random tile
+    // get main scene
+    const scene = game.currentScene as MainScene;
+    const path = search({
+      cutCorners: false,
+      diagonal: false,
+      from: [start.x, start.y],
+      to: [end.x, end.y],
+      grid: scene.navgrid ?? [],
+    });
+
+    if (path === null) {
+      console.warn("No path found");
+      return;
+    }
+
+    // check if we have enough energy to walk the path
+    if (this.get(LivingComponent).energy < path.length) {
+      console.warn("Not enough energy to walk the path");
+      return;
+    }
+
+    // subtract energy depending on path length
+    this.get(LivingComponent).energy -= path.length;
+
+    // move along the path
+    for (let i = 0; i < path.length; i++) {
+      const next_tile_pos = path[i];
+      this.actions.easeTo(
+        this.isoMap.tileToWorld(vec(next_tile_pos[0], next_tile_pos[1])),
+        100
+      );
+    }
   }
 
   public onInitialize() {}

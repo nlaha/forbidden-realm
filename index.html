@@ -5,9 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crimson Game Jam - Fall 2024</title>
+
     <style>
       body {
         margin: 0;
+        background-color: #000;
+        color: #fff;
       }
       #game {
         display: block;
@@ -55,6 +58,15 @@
         border-bottom-left-radius: 0.5rem;
         border-bottom-right-radius: 0.5rem;
       }
+
+      .info-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      tr:nth-child(even) {
+        background-color: #472727;
+      }
     </style>
   </head>
 
@@ -62,7 +74,20 @@
     <main>
       <canvas id="game"></canvas>
       <div id="palette"></div>
-      <div id="info-panel"></div>
+      <div id="info-panel" style="margin: 1rem">
+        <!-- table to display info about each character, first name, state, and inventory -->
+        <table class="info-table">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>State</th>
+              <th>Inventory</th>
+              <th>Visible Entities</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </main>
     <script type="module" src="./src/main.ts"></script>
   </body>

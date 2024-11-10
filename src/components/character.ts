@@ -1,4 +1,4 @@
-import { Component } from "excalibur";
+import { Component, Entity } from "excalibur";
 import { female_names, male_names } from "../tables/names";
 
 export class LivingComponent extends Component {
@@ -46,9 +46,41 @@ export class BrainComponent extends Component {
   }
 }
 
+export class InventoryComponent extends Component {
+  public items: string[] = [];
+  public capacity: number = 10;
+
+  public onAdd() {}
+
+  public addItem(item: string) {
+    if (this.items.length < this.capacity) {
+      this.items.push(item);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public removeItem(item: string) {
+    this.items = this.items.filter((i) => i !== item);
+  }
+
+  public hasCapacity(): boolean {
+    return this.items.length < this.capacity;
+  }
+}
+
+export enum CharacterState {
+  WALKING,
+  IDLE,
+  HARVESTING,
+}
+
 export class CharacterComponent extends Component {
   public first_name: string;
   public last_name: string;
+
+  public state: CharacterState = CharacterState.IDLE;
 
   public onAdd() {
     const all_names = [...male_names, ...female_names];
@@ -56,5 +88,20 @@ export class CharacterComponent extends Component {
 
     this.first_name = random_name;
     console.log(`Hello, my name is ${this.first_name}`);
+  }
+}
+
+export class VisionComponent extends Component {
+  public range: number = 200;
+
+  public visibleEntities: Set<Entity> = new Set();
+
+  // Gets all visible entities that have the given component
+  public getWithComponent<T extends Component>(
+    component: new () => T
+  ): Entity[] {
+    return Array.from(this.visibleEntities).filter((e): e is Entity =>
+      e.has(component)
+    );
   }
 }

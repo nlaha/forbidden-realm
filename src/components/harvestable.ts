@@ -1,6 +1,6 @@
 import { Component } from "excalibur";
 
-export class HarvestableResource extends Component {
+export class HarvestableResourceComponent extends Component {
   public resourceType: string;
   public amount: number;
 
