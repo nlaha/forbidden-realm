@@ -23,6 +23,7 @@ class Game extends Engine {
         height: 600,
       },
       pixelArt: true,
+      maxFps: 60,
       scenes: {
         mainScene: MainScene,
       },

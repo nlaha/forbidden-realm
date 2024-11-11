@@ -7,6 +7,7 @@ import {
   IsometricMap,
   Label,
   Scene,
+  Timer,
   vec,
 } from "excalibur";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
@@ -46,13 +47,15 @@ class MainScene extends Scene {
 
   buildingDefinitions: any = [];
 
+  uiUpdateSystem: UIUpdateSystem | null = null;
+
   deaths: any[] = [];
 
   public update(engine: Engine, delta: number): void {
     super.update(engine, delta);
     // increment game time on document
     const timeElement = document.getElementById("time");
-    timeElement!.innerHTML = this.gameTime.toFixed(2);
+    timeElement!.innerText = this.gameTime.toFixed(2);
 
     // increment game time
     this.gameTime += delta / 1000;
@@ -302,10 +305,21 @@ class MainScene extends Scene {
     this.world.add(HarvestSystem);
     this.world.add(DepotSystem);
     this.world.add(NeighborSystem);
-    this.world.add(UIUpdateSystem);
     this.world.add(DisasterSystem);
     this.world.add(EatSystem);
     this.world.add(DialogueSystem);
+
+    this.uiUpdateSystem = new UIUpdateSystem(this.world);
+
+    const uiUpdateTimer = new Timer({
+      fcn: () => this.uiUpdateSystem?.update(0),
+      repeats: true,
+      interval: 500,
+    });
+
+    engine.currentScene.add(uiUpdateTimer);
+
+    uiUpdateTimer.start();
   }
 }
 

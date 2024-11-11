@@ -11,7 +11,7 @@ import { InventoryComponent } from "../components/inventory";
 import MainScene from "../main_scene";
 import { Storage } from "../storage";
 
-class UIUpdateSystem extends System {
+class UIUpdateSystem {
   query: Query<
     | typeof CharacterComponent
     | typeof InventoryComponent
@@ -20,7 +20,6 @@ class UIUpdateSystem extends System {
   >;
 
   constructor(world: World) {
-    super();
     this.query = world.query([
       CharacterComponent,
       InventoryComponent,
@@ -34,6 +33,7 @@ class UIUpdateSystem extends System {
   // Run this system in the "update" phase
   public systemType = SystemType.Update;
   public static table_built = false;
+  public obituary_table_html = "";
 
   public update(delta: number) {
     // update the storage display
@@ -59,7 +59,6 @@ class UIUpdateSystem extends System {
       item.element.classList.toggle("unavailable", !canAfford);
     }
 
-    const obituaryTable = document.getElementById("obituary")!;
     const obituaryData = scene.deaths.map((death) => {
       return `
             <tr>
@@ -70,6 +69,11 @@ class UIUpdateSystem extends System {
     });
 
     if (scene.deaths.length > 0) {
+      const obituaryTable = document.getElementById("obituary")!;
+      if (this.obituary_table_html === obituaryTable.innerHTML) {
+        return;
+      }
+
       obituaryTable.innerHTML = `
             <tr>
                 <th>Name</th>
@@ -77,6 +81,7 @@ class UIUpdateSystem extends System {
             </tr>
             ${obituaryData.join("")}
         `;
+      this.obituary_table_html = obituaryTable.innerHTML;
     }
 
     if (!UIUpdateSystem.table_built) {
