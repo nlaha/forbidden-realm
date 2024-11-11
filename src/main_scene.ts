@@ -217,7 +217,7 @@ class MainScene extends Scene {
     mark_tiles_as_solid(this.isoMap);
 
     // spawn humans in random locations
-    Array.from(spawner(1, 3, this.isoMap, "grass")).forEach((pos, idx) => {
+    Array.from(spawner(1, 4, this.isoMap, "grass")).forEach((pos, idx) => {
       const human = new Character(this.isoMap, { pos: pos });
       console.log(idx);
       switch (idx) {
@@ -225,9 +225,12 @@ class MainScene extends Scene {
           human.get(CharacterComponent).role = CharacterRole.WOODCUTTER;
           break;
         case 1:
-          human.get(CharacterComponent).role = CharacterRole.MINER;
+          human.get(CharacterComponent).role = CharacterRole.WOODCUTTER;
           break;
         case 2:
+          human.get(CharacterComponent).role = CharacterRole.MINER;
+          break;
+        case 3:
           human.get(CharacterComponent).role = CharacterRole.MINER;
           break;
       }

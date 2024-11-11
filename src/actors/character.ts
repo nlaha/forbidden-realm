@@ -100,7 +100,7 @@ class Character extends Actor {
     if (this.get(LivingComponent).isHungry()) {
       this.moveSpeedMs = 500;
     } else {
-      this.moveSpeedMs = 100;
+      this.moveSpeedMs = 250;
     }
 
     // every second the character is starving, they lose 5 health

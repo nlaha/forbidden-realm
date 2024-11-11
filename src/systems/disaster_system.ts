@@ -48,24 +48,14 @@ const lightningAnim = Animation.fromSpriteSheet(
 class DisasterSystem extends System {
   public systemType = SystemType.Update;
 
-  query: Query<
-    | typeof CharacterComponent
-    | typeof InventoryComponent
-    | typeof NeighborsComponent
-    | typeof LivingComponent
-  >;
+  query: Query<typeof CharacterComponent>;
 
   buildingQuery: Query<typeof BuildingComponent>;
   world: World;
 
   constructor(world: World) {
     super();
-    this.query = world.query([
-      CharacterComponent,
-      InventoryComponent,
-      NeighborsComponent,
-      LivingComponent,
-    ]);
+    this.query = world.query([CharacterComponent]);
 
     this.world = world;
 

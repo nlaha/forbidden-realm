@@ -89,7 +89,7 @@ class Building extends Actor {
 
     // update construction progress
     if (this.placed && this.construction_progress < 1) {
-      this.construction_progress += delta / 1000;
+      this.construction_progress += delta / 5000;
       this.children
         .find((child) => child instanceof ProgressIndicator)!
         .setPercent(Math.round(this.construction_progress * 100));
