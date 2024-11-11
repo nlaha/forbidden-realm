@@ -11,9 +11,7 @@ import {
   vec,
   World,
 } from "excalibur";
-import {
-  CharacterComponent,
-} from "../components/character";
+import { CharacterComponent } from "../components/character";
 import HarvestSystem from "./harvest_system";
 import DialogueSystem from "./dialogue_system";
 import { BuildingComponent } from "../components/building";
@@ -75,11 +73,12 @@ class DisasterSystem extends System {
     switch (random.d4()) {
       // destroy a random building
       case 1: {
-        DialogueSystem.showText(
-					"The creations of man shall fall by my hand!"
-				);
-				
-        const buildings = (this.buildingQuery.entities).filter((building) => !building.hasTag("bridge"));
+        DialogueSystem.showText("The creations of man shall fall by my hand!");
+
+        const buildings = this.buildingQuery.entities.filter(
+          (building) => !building.hasTag("bridge")
+        );
+        console.log(buildings);
 
         if (buildings.length != 0) {
           const building = buildings[
@@ -108,9 +107,7 @@ class DisasterSystem extends System {
 
       // kill a random human
       case 2: {
-        DialogueSystem.showText(
-					"My wrath smites your workers!"
-				);
+        DialogueSystem.showText("My wrath smites your workers!");
         const humans = this.query.entities;
         if (humans.length != 0) {
           const char = humans[
@@ -138,7 +135,7 @@ class DisasterSystem extends System {
         HarvestSystem.harvestRate = 2;
 
         const timer = new Timer({
-          fcn: () => HarvestSystem.harvestRate = 0.75,
+          fcn: () => (HarvestSystem.harvestRate = 0.75),
           repeats: false,
           interval: 30000,
         });
