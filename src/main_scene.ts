@@ -127,6 +127,11 @@ class MainScene extends Scene {
       ],
     });
 
+    this.status_table.on("tableBuilt", () => {
+      console.log("Table built");
+      UIUpdateSystem.table_built = true;
+    });
+
     // initialize scene actors
     this.isoMap = new IsometricMap({
       pos: vec(500, 200),

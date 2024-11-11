@@ -33,10 +33,11 @@ class UIUpdateSystem extends System {
   public priority = 200;
   // Run this system in the "update" phase
   public systemType = SystemType.Update;
+  public static table_built = false;
 
   public update(delta: number) {
     // update the storage display
-    document.getElementById("storage")!.innerHTML = Array.from(
+    document.getElementById("storage")!.innerText = Array.from(
       Storage.storage.entries()
     )
       .map(([key, value]) => `${key}: ${value}`)
@@ -78,6 +79,10 @@ class UIUpdateSystem extends System {
         `;
     }
 
+    if (!UIUpdateSystem.table_built) {
+      return;
+    }
+
     if (!scene.status_table) {
       console.log("No status_table found in UIUpdateSystem");
       return;
@@ -106,6 +111,11 @@ class UIUpdateSystem extends System {
         vision: visionComponent.visibleEntities.size,
       };
     });
+
+    // if the table matches the data, don't update it
+    if (scene.status_table.getData() === newData) {
+      return;
+    }
 
     // if we can't find the entity ID in the table, add it
     const currentIds = scene.status_table.getData().map((data) => data.id);
