@@ -115,6 +115,7 @@ class Building extends Actor {
     // check storage to see if we have enough resources
     if (!Storage.canAfford(this.cost)) {
       console.log("Not enough resources");
+      this.die();
       return;
     }
 
@@ -138,6 +139,7 @@ class Building extends Actor {
     );
 
     if (!canPlace) {
+      console.log("Cannot place building here");
       this.die();
       return;
     }
