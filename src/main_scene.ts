@@ -11,7 +11,7 @@ import {
   vec,
 } from "excalibur";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
-import { Tiles, Buildings, Harvestables } from "./resources";
+import { Tiles, Buildings, Harvestables, Music } from "./resources";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 import CameraController from "./utility/camera_controller";
 import Character from "./actors/character";
@@ -320,6 +320,9 @@ class MainScene extends Scene {
     engine.currentScene.add(uiUpdateTimer);
 
     uiUpdateTimer.start();
+
+    Music.music1.play(0.5);
+    Music.music1.loop = true;
   }
 }
 

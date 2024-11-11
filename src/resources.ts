@@ -1,4 +1,4 @@
-import { ImageSource, Loader, SpriteFont, SpriteSheet } from "excalibur";
+import { ImageSource, Loader, Sound, SpriteFont, SpriteSheet } from "excalibur";
 
 // import tiles
 import dirt from "./images/tiles/dirt.png";
@@ -16,6 +16,9 @@ import bridge from "./images/buildings/bridge.png";
 import farm_healthy from "./images/buildings/farm_healthy.png";
 import farm_dying from "./images/buildings/farm_dying.png";
 import church from "./images/buildings/church.png";
+
+// music
+import music1 from "url:./music/music_loop1.mp3";
 
 // effects
 import lightning from "./images/effects/lightning.png";
@@ -79,6 +82,10 @@ export const Characters = {
 
 export const Effects = {
   Lightning: new ImageSource(lightning),
+};
+
+export const Music = {
+  music1: new Sound(music1),
 };
 
 export const Buildings = {
@@ -158,6 +165,7 @@ for (const res of [
   Object.values(Buildings).map((b) => b.img),
   Object.values(Harvestables).map((h) => h.img),
   Object.values(Effects),
+  Object.values(Music),
 ].flat()) {
   loader.addResource(res);
 }

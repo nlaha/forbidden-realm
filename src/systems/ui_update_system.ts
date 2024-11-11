@@ -19,13 +19,10 @@ class UIUpdateSystem {
     | typeof LivingComponent
   >;
 
+  public world: World;
+
   constructor(world: World) {
-    this.query = world.query([
-      CharacterComponent,
-      InventoryComponent,
-      VisionComponent,
-      LivingComponent,
-    ]);
+    this.world = world;
   }
   // Lower numbers mean higher priority
   // 99 is low priority
@@ -36,6 +33,13 @@ class UIUpdateSystem {
   public obituary_table_html = "";
 
   public update(delta: number) {
+    this.query = this.world.query([
+      CharacterComponent,
+      InventoryComponent,
+      VisionComponent,
+      LivingComponent,
+    ]);
+
     // update the storage display
     document.getElementById("storage")!.innerText = Array.from(
       Storage.storage.entries()
@@ -70,21 +74,20 @@ class UIUpdateSystem {
 
     if (scene.deaths.length > 0) {
       const obituaryTable = document.getElementById("obituary")!;
-      if (this.obituary_table_html === obituaryTable.innerHTML) {
-        return;
-      }
-
-      obituaryTable.innerHTML = `
+      if (this.obituary_table_html !== obituaryTable.innerHTML) {
+        obituaryTable.innerHTML = `
             <tr>
                 <th>Name</th>
                 <th>Cause</th>
             </tr>
             ${obituaryData.join("")}
         `;
-      this.obituary_table_html = obituaryTable.innerHTML;
+        this.obituary_table_html = obituaryTable.innerHTML;
+      }
     }
 
     if (!UIUpdateSystem.table_built) {
+      console.warn("Building table");
       return;
     }
 
@@ -119,30 +122,31 @@ class UIUpdateSystem {
 
     // if the table matches the data, don't update it
     if (scene.status_table.getData() === newData) {
+      console.warn("Data matches, not updating table");
       return;
     }
 
     // if we can't find the entity ID in the table, add it
-    const currentIds = scene.status_table.getData().map((data) => data.id);
     for (let data of newData) {
       // if the state is dead, remove the character from the table
       if (data.state === CharacterState.DEAD) {
         scene.status_table.deleteRow(data.id);
-        continue;
-      }
-      if (!currentIds.includes(data.id)) {
-        scene.status_table.addRow(data);
       } else {
-        // remove role column
-        scene.status_table.updateRow(data.id, {
-          id: data.id,
-          name: data.name,
-          state: data.state,
-          health: data.health,
-          food: data.food,
-          inventory: data.inventory,
-          vision: data.vision,
-        });
+        const currentIds = scene.status_table.getData().map((data) => data.id);
+        if (!currentIds.includes(data.id)) {
+          scene.status_table.addRow(data);
+        } else {
+          // remove role column
+          scene.status_table.updateRow(data.id, {
+            id: data.id,
+            name: data.name,
+            state: data.state,
+            health: data.health,
+            food: data.food,
+            inventory: data.inventory,
+            vision: data.vision,
+          });
+        }
       }
     }
   }
