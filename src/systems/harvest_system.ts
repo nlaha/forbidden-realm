@@ -126,7 +126,12 @@ class HarvestSystem extends System {
         // add up the harvest rate increase
         const harvestRateIncrease = 100 * this.harvestRateQuery.entities.length;
         const baseDelay = 5000 * HarvestSystem.harvestRate;
-        const harvestDelay = baseDelay - harvestRateIncrease;
+        let harvestDelay = baseDelay - harvestRateIncrease;
+
+        // set a minimum delay of 100ms
+        if (harvestDelay < 100) {
+          harvestDelay = 100;
+        }
 
         // after the delay, harvest the resource
         character.actions.delay(harvestDelay).callMethod(() => {
