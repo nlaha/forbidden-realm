@@ -3,7 +3,7 @@ import { Storage } from "../storage";
 
 export class InventoryComponent extends Component {
   public items: Map<string, number> = new Map();
-  public capacity: number = 2;
+  public capacity: number = 3;
 
   public onAdd() {}
 

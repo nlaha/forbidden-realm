@@ -49,7 +49,7 @@ let selectedCharacter: Character | null = null;
 class Character extends Actor {
   isoMap: IsometricMap;
   moveSpeedMs: number = 100;
-  hungerRate: number = 1;
+  hungerRate: number = 0.75;
 
   constructor(isoMap: IsometricMap, config: ActorArgs) {
     super(config);

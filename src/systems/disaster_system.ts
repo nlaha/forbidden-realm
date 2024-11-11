@@ -138,7 +138,7 @@ class DisasterSystem extends System {
         HarvestSystem.harvestRate = 2;
 
         const timer = new Timer({
-          fcn: () => HarvestSystem.harvestRate = 1,
+          fcn: () => HarvestSystem.harvestRate = 0.75,
           repeats: false,
           interval: 30000,
         });
