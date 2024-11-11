@@ -8,18 +8,14 @@ import {
   System,
   SystemType,
   Timer,
-  TransformComponent,
   vec,
   World,
 } from "excalibur";
 import {
   CharacterComponent,
-  LivingComponent,
-  NeighborsComponent,
 } from "../components/character";
 import HarvestSystem from "./harvest_system";
 import DialogueSystem from "./dialogue_system";
-import { InventoryComponent } from "../components/inventory";
 import { BuildingComponent } from "../components/building";
 import Character from "../actors/character";
 import { Effects } from "../resources";
@@ -65,7 +61,7 @@ class DisasterSystem extends System {
     const timer = new Timer({
       fcn: () => this.startDisaster(),
       repeats: true,
-      interval: 60000,
+      interval: 5000,
     });
 
     world.scene.add(timer);
@@ -82,7 +78,9 @@ class DisasterSystem extends System {
         DialogueSystem.showText(
 					"The creations of man shall fall by my hand!"
 				);
-        const buildings = this.buildingQuery.entities;
+				
+        const buildings = (this.buildingQuery.entities).filter((building) => !building.hasTag("bridge"));
+
         if (buildings.length != 0) {
           const building = buildings[
             random.integer(0, buildings.length - 1)
@@ -137,12 +135,12 @@ class DisasterSystem extends System {
         DialogueSystem.showText(
           "Your people grow tired from the slothful plague."
         );
-        HarvestSystem.harvestRate *= 2;
+        HarvestSystem.harvestRate = 2;
 
         const timer = new Timer({
-          fcn: () => (HarvestSystem.harvestRate /= 2),
+          fcn: () => HarvestSystem.harvestRate = 1,
           repeats: false,
-          interval: 60000,
+          interval: 30000,
         });
 
         this.world.scene.add(timer);
@@ -159,18 +157,18 @@ class DisasterSystem extends System {
         );
         for (let entity of this.query.entities) {
           const character = entity as Character;
-          character.hungerRate *= 2;
+          character.hungerRate = 2.5;
         }
 
         const timer = new Timer({
           fcn: () => {
             for (let entity of this.query.entities) {
               const character = entity as Character;
-              character.hungerRate /= 2;
+              character.hungerRate = 1;
             }
           },
           repeats: false,
-          interval: 60000,
+          interval: 30000,
         });
 
         this.world.scene.add(timer);
