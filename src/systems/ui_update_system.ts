@@ -23,6 +23,13 @@ class UIUpdateSystem {
 
   constructor(world: World) {
     this.world = world;
+
+    this.query = world.query([
+      CharacterComponent,
+      InventoryComponent,
+      VisionComponent,
+      LivingComponent,
+    ]);
   }
   // Lower numbers mean higher priority
   // 99 is low priority
@@ -33,13 +40,6 @@ class UIUpdateSystem {
   public obituary_table_html = "";
 
   public update(delta: number) {
-    this.query = this.world.query([
-      CharacterComponent,
-      InventoryComponent,
-      VisionComponent,
-      LivingComponent,
-    ]);
-
     // update the storage display
     document.getElementById("storage")!.innerText = Array.from(
       Storage.storage.entries()
@@ -74,15 +74,15 @@ class UIUpdateSystem {
 
     if (scene.deaths.length > 0) {
       const obituaryTable = document.getElementById("obituary")!;
-      if (this.obituary_table_html !== obituaryTable.innerHTML) {
-        obituaryTable.innerHTML = `
+      this.obituary_table_html = `
             <tr>
                 <th>Name</th>
                 <th>Cause</th>
             </tr>
             ${obituaryData.join("")}
         `;
-        this.obituary_table_html = obituaryTable.innerHTML;
+      if (this.obituary_table_html !== obituaryTable.innerHTML) {
+        obituaryTable.innerHTML = this.obituary_table_html;
       }
     }
 
@@ -132,21 +132,7 @@ class UIUpdateSystem {
       if (data.state === CharacterState.DEAD) {
         scene.status_table.deleteRow(data.id);
       } else {
-        const currentIds = scene.status_table.getData().map((data) => data.id);
-        if (!currentIds.includes(data.id)) {
-          scene.status_table.addRow(data);
-        } else {
-          // remove role column
-          scene.status_table.updateRow(data.id, {
-            id: data.id,
-            name: data.name,
-            state: data.state,
-            health: data.health,
-            food: data.food,
-            inventory: data.inventory,
-            vision: data.vision,
-          });
-        }
+        scene.status_table.updateOrAddRow(data.id, data);
       }
     }
   }

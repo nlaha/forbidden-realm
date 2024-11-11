@@ -7,6 +7,7 @@ import {
   SpriteSheet,
   System,
   SystemType,
+  TagQuery,
   Timer,
   vec,
   World,
@@ -45,7 +46,7 @@ class DisasterSystem extends System {
 
   query: Query<typeof CharacterComponent>;
 
-  buildingQuery: Query<typeof BuildingComponent>;
+  buildingQuery: TagQuery<string>;
   world: World;
 
   constructor(world: World) {
@@ -54,7 +55,7 @@ class DisasterSystem extends System {
 
     this.world = world;
 
-    this.buildingQuery = world.query([BuildingComponent]);
+    this.buildingQuery = world.queryTags(["building"]);
 
     // start the timer that starts a disaster every minute
     const timer = new Timer({
@@ -76,8 +77,9 @@ class DisasterSystem extends System {
       case 1: {
         DialogueSystem.showText("The creations of man shall fall by my hand!");
 
+        // filter out bridges
         const buildings = this.buildingQuery.entities.filter(
-          (building) => !building.hasTag("bridge")
+          (b) => !(b as Building).hasTag("bridge")
         );
         console.log(buildings);
 
