@@ -51,6 +51,8 @@ export class LivingComponent extends Component {
   public onAdd() {}
 }
 
+export default LivingComponent
+
 export interface Thought {
   message: string;
   negativity: number;

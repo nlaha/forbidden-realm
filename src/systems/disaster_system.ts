@@ -12,6 +12,7 @@ import {
   World,
 } from "excalibur";
 import { CharacterComponent } from "../components/character";
+import LivingComponent from "../components/character"
 import HarvestSystem from "./harvest_system";
 import DialogueSystem from "./dialogue_system";
 import { BuildingComponent } from "../components/building";
@@ -84,6 +85,13 @@ class DisasterSystem extends System {
           const building = buildings[
             random.integer(0, buildings.length - 1)
           ] as Building;
+
+          if (building.constructor.name == "Church") {
+            for (let entity of this.query.entities) {
+              const character = entity as Character;
+              character.get(LivingComponent).takeDamage(character.get(LivingComponent).health / 2)
+            }
+          }
 
           const lightning = new Actor({
             pos: building.pos.add(vec(0, -20)),
