@@ -54,7 +54,7 @@ class DisasterSystem extends System {
 
     this.world = world;
 
-    this.buildingQuery = world.queryTags(["building"]);
+    this.buildingQuery = world.queryTags(["buildingObject"]);
 
     // start the timer that starts a disaster every minute
     const timer = new Timer({
