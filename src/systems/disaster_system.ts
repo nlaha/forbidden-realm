@@ -61,7 +61,7 @@ class DisasterSystem extends System {
     const timer = new Timer({
       fcn: () => this.startDisaster(),
       repeats: true,
-      interval: 5000,
+      interval: 45000,
     });
 
     world.scene.add(timer);
