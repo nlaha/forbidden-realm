@@ -38,6 +38,7 @@ import Rock from "./actors/harvestables/rock";
 import Tree from "./actors/harvestables/tree";
 import Farm from "./actors/buildings/farm";
 import Church from "./actors/buildings/church";
+import Bridge from "./actors/buildings/bridge";
 
 export const Tiles = {
   Dirt: new ImageSource(dirt),
@@ -103,7 +104,7 @@ export const Buildings = {
   Bridge: {
     name: "Bridge",
     img: new ImageSource(bridge),
-    type: Building,
+    type: Bridge,
     walkability: 0,
     description: "Allows crossing rivers",
     cost: new Map([["🪵", 1]]),

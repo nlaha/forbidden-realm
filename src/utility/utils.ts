@@ -107,6 +107,7 @@ export function mark_tiles_as_solid(isoMap: IsometricMap) {
     // water is also -1
     if (tile.tags.has("water")) {
       (game.currentScene as MainScene).navgrid![tile.y][tile.x] = -1;
+      tile.solid = true;
       //tile.addGraphic(Tiles.Red.toSprite());
       continue;
     }
@@ -168,7 +169,9 @@ export function mark_tile_solid_single(
 
   // if any of the tiles to mark are solid, return false
   for (let tile of tilesToMark) {
-    if ((tile.solid && !tile.tags.has("water")) || tile.tags.has("building")) {
+    const bridgeCase = tile.tags.has("water") && actor.tags.has("bridge");
+    // print tile tags
+    if ((tile.solid && !bridgeCase) || tile.tags.has("building")) {
       console.log(
         `Can't place building because of the following state: ${
           tile.solid

@@ -6,7 +6,7 @@ import { HarvestableResourceComponent } from "../../components/harvestable";
 import MainScene from "../../main_scene";
 import { VisibleComponent } from "../../components/visible";
 
-class Farm extends Building {
+class Bridge extends Building {
   constructor(
     isoMap: ex.IsometricMap,
     pos: ex.Vector,
@@ -15,6 +15,9 @@ class Farm extends Building {
     cost: Map<string, number>
   ) {
     super(isoMap, pos, img, walkability, cost);
+
+    // add bridge tag to the building
+    this.tags.add("bridge");
   }
 
   public update(engine: ex.Engine, delta: number): void {
@@ -23,18 +26,7 @@ class Farm extends Building {
 
   public onConstructionDone(): void {
     super.onConstructionDone();
-
-    // add HarvestableResourceComponent
-    this.addComponent(new VisibleComponent());
-    this.addComponent(new HarvestableResourceComponent());
-    this.get(HarvestableResourceComponent).resourceType = "🌿";
-    this.get(HarvestableResourceComponent).harvestableBy = [
-      CharacterRole.FARMER,
-    ];
-
-    // add to scene harvestables array
-    (this.scene as MainScene).harvestables.push(this);
   }
 }
 
-export default Farm;
+export default Bridge;
