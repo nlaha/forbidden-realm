@@ -72,7 +72,9 @@ class Building extends Actor {
   }
 
   public onConstructionDone() {
+    console.log("Adding building component");
     this.addComponent(new BuildingComponent());
+    this.addTag("building");
     this.children.find((child) => child instanceof ProgressIndicator)!.kill();
   }
 
